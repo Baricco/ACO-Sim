@@ -14,12 +14,12 @@ import com.example.simulation.Simulation;
 import javafx.animation.AnimationTimer;
 
 /**
- * Manager che coordina simulazione e rendering - OTTIMIZZATO per density fields
+ * Manager che coordina simulazione e rendering
  */
 public class SimulationManager {
     
 
-    private static final double FRAME_SKIP = 3;         // Aggiorna i feromoni ogni 2 frame per ridurre il carico
+    private static final double FRAME_SKIP = 3;         // Aggiorna i feromoni ogni 3 frame per ridurre il carico
 
     private Simulation currentSimulation;
     private GameCanvas canvas;
@@ -33,8 +33,8 @@ public class SimulationManager {
     private double fps;
     private long fpsLastTime = 0;
 
-    private MultiHashGrid gameObjectGrid = new MultiHashGrid();        
-    private PheromoneRenderer pheromoneRenderer = new PheromoneRenderer();
+    private final MultiHashGrid gameObjectGrid = new MultiHashGrid();        
+    private final PheromoneRenderer pheromoneRenderer = new PheromoneRenderer();
 
     private boolean pheromonesEnabled = true;                               
     
@@ -149,7 +149,7 @@ public class SimulationManager {
     }
     
     /**
-     * Aggiorna la logica della simulazione - OTTIMIZZATO
+     * Aggiorna la logica della simulazione
      */
     private void update(double deltaTime) {
         if (!running || currentSimulation == null) return;
@@ -219,7 +219,7 @@ public class SimulationManager {
     }
 
     /**
-     * Rilascio feromoni ottimizzato - usa density field
+     * Rilascio feromoni
      */
     private void releasePheromone(Ant ant) {
         if (!ant.isEnabled()) return;
@@ -274,7 +274,7 @@ public class SimulationManager {
     }
     
     /**
-     * Rendering ottimizzato con fluid renderer
+     * Rendering principale
      */
     private void render() {
         if (!running || currentSimulation == null) return;
@@ -292,7 +292,7 @@ public class SimulationManager {
 
         long pheromoneRenderStart = System.nanoTime();
 
-        // Renderizza density field come scie fluide
+        // Renderizza density field
         if (pheromonesEnabled && currentSimulation.getDensityManager() != null) {
             pheromoneRenderer.renderDensityTrails(canvas, currentSimulation.getDensityManager());
         }

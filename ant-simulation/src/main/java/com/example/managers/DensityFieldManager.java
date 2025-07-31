@@ -168,7 +168,6 @@ public class DensityFieldManager {
     
     /**
      * Calcola gradiente per navigazione formiche
-     * MIGLIORATO con sampling più ampio per maggiore precisione
      */
     public Coord getPheromoneGradient(Coord position, Pheromone.PheromoneType type) {
         int x = (int) (position.x / CELL_SIZE);

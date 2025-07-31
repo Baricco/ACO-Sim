@@ -17,7 +17,7 @@ public class PheromoneRenderer {
     private boolean renderingEnabled = true;
     
     /**
-     * RENDERING PRINCIPALE - Trova e renderizza scie continue
+     * RENDERING PRINCIPALE - Renderizza scie di feromoni come punti
      */
     public void renderDensityTrails(GameCanvas canvas, DensityFieldManager densityManager) {
         if (!renderingEnabled) return;

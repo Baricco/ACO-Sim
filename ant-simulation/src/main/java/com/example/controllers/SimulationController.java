@@ -43,10 +43,6 @@ public class SimulationController implements Initializable {
         // Ottieni le dimensioni del container
         double width = canvasContainer.getWidth();
         double height = canvasContainer.getHeight();
-
-        // Se le dimensioni non sono ancora disponibili, usa valori di default
-        if (width <= 0) width = 800;
-        if (height <= 0) height = 600;
         
 
         // Crea il canvas per il rendering
@@ -85,7 +81,7 @@ public class SimulationController implements Initializable {
         double height = gameCanvas.getHeight();
                 
         // Se le dimensioni non sono ancora valide, riprova
-        if (width <= 100 || height <= 100) { // Soglia ragionevole invece di 0
+        if (width <= 100 || height <= 100) {
             Platform.runLater(() -> waitForCanvasReady());
             return;
         }
