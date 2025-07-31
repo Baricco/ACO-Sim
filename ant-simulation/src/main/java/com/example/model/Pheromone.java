@@ -24,9 +24,7 @@ public class Pheromone {
     public static final double MAX_INTENSITY = 1.0;                     // Intensità massima
     public static final double MIN_INTENSITY = 0.1;                    // Intensità minima prima della rimozione
     
-    /**
-     * Ottieni colore per tipo di feromone
-     */
+
     public static Color getColorForType(PheromoneType type) {
         switch(type) {
             case FOOD_TRAIL:
@@ -38,13 +36,10 @@ public class Pheromone {
         }
     }
     
-    /**
-     * Ottieni colore con alpha per rendering fluido
-     */
-    public static Color getColorWithAlpha(PheromoneType type, double intensity, double maxIntensity) {
+    public static Color getColorWithAlpha(PheromoneType type, double intensity) {
         Color baseColor = getColorForType(type);
-        double alpha = Math.min(0.8, intensity / maxIntensity);
-        
+        double alpha = Math.min(0.8, intensity / MAX_INTENSITY);
+
         return new Color(
             baseColor.getRed(),
             baseColor.getGreen(),

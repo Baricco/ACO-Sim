@@ -3,7 +3,7 @@ package com.example.simulation;
 public class FullSimulation extends Simulation {
     
     private static final int NEST_NUMBER = 1;
-    private static final int ANT_NUMBER = 1000;
+    private static final int ANT_NUMBER = 500;
     private static final int CLUMP_SIZE = 100;                       // Numero di pezzi di cibo in un ammasso
     private static final int CLUMP_NUMBER = 15;                      // Numero di ammassi di cibo        
 

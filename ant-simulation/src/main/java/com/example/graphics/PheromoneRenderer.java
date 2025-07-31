@@ -48,28 +48,23 @@ public class PheromoneRenderer {
                 // Food dots
                 double foodIntensity = foodField[x][y];
                 if (foodIntensity > Pheromone.MIN_INTENSITY) {
-                    renderDot(canvas, x * cellSize, y * cellSize, foodIntensity, 
-                             Pheromone.FOOD_TRAIL_COLOR);
+                    renderDot(canvas, x * cellSize, y * cellSize, foodIntensity, Pheromone.PheromoneType.FOOD_TRAIL);
                 }
                 
                 // Home dots
                 double homeIntensity = homeField[x][y];
                 if (homeIntensity > Pheromone.MIN_INTENSITY) {
-                    renderDot(canvas, x * cellSize, y * cellSize, homeIntensity, 
-                             Pheromone.HOME_TRAIL_COLOR);
+                    renderDot(canvas, x * cellSize, y * cellSize, homeIntensity, Pheromone.PheromoneType.HOME_TRAIL);
                 }
             }
         }
     }
     
-    private void renderDot(GameCanvas canvas, double x, double y, double intensity, Color baseColor) {
+    private void renderDot(GameCanvas canvas, double x, double y, double intensity, Pheromone.PheromoneType type) {
         // Raggio basato su intensità
         double radius = Pheromone.PHEROMONE_SIZE * (intensity / Pheromone.MAX_INTENSITY);
 
-        // Alpha più visibile
-        double alpha = intensity / Pheromone.MAX_INTENSITY;
-        
-        Color color = new Color(baseColor.getRed(), baseColor.getGreen(), baseColor.getBlue(), alpha);
+        Color color = Pheromone.getColorWithAlpha(type, intensity);
 
         canvas.renderCircle(x + RANDOM.nextGaussian() * RANDOM_OFFSET, y + RANDOM.nextGaussian() * RANDOM_OFFSET, radius, color);
     }
