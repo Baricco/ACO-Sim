@@ -1,0 +1,1 @@
+"C:\ProgramFiles\Apache\Maven\apache-maven-3.9.11\bin\mvn.cmd" clean javafx:run

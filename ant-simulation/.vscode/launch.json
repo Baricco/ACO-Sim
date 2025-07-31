@@ -1,0 +1,24 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "App",
+            "request": "launch",
+            "mainClass": "com.example.App",
+            "projectName": "ant-simulation"
+        },
+        {
+            "name": "Run JavaFX via Maven",
+            "type": "node",
+            "request": "launch",
+            "program": "C:\\ProgramFiles\\Apache\\Maven\\apache-maven-3.9.11\\bin\\mvn.cmd",
+            "args": [
+                "clean",
+                "javafx:run"
+            ],
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
