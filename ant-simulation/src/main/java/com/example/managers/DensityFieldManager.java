@@ -27,6 +27,13 @@ public class DensityFieldManager {
     private static final double JITTER_RADIUS = MIN_DISTANCE_BETWEEN_PHEROMONES * 0.15;
     private static final double MIN_TIME_BETWEEN_PHEROMONES = 0.025; // secondi
     
+    private static final double DIFFUSION_RATE = 0.25; // Fattore di diffusione per il campo
+    private static final double[][] GAUSSIAN_KERNEL = {
+        {0.077847, 0.123317, 0.077847},
+        {0.123317, 0.195346, 0.123317}, 
+        {0.077847, 0.123317, 0.077847}
+    };
+
     private static final Random RANDOM = new Random();
 
     public DensityFieldManager(double mapWidth, double mapHeight) {
@@ -161,20 +168,11 @@ public class DensityFieldManager {
         // Calcola intensità diffusione basata su deltaTime
         // Più deltaTime = più diffusione per mantenere consistenza temporale
 
-        final double DIFFUSION_RATE = 0.25; // Fattore di diffusione
-
         double diffusion = DIFFUSION_RATE * deltaTime;
         
         // Array temporaneo per evitare race conditions durante il calcolo
         // Non possiamo modificare 'field' mentre lo leggiamo
         double[][] tempField = new double[gridWidth][gridHeight];
-
-
-        final double[][] GAUSSIAN_KERNEL_3x3 = {
-            {0.077847, 0.123317, 0.077847},
-            {0.123317, 0.195346, 0.123317}, 
-            {0.077847, 0.123317, 0.077847}
-        };
         
         // Itera su ogni cella della griglia
         for (int x = 0; x < gridWidth; x++) {
@@ -203,7 +201,7 @@ public class DensityFieldManager {
                         if (isValidCell(gridX, gridY)) {
                             
                             // Ottieni peso gaussiano pre-calcolato dal kernel
-                            double weight = GAUSSIAN_KERNEL_3x3[kernelX][kernelY];
+                            double weight = GAUSSIAN_KERNEL[kernelX][kernelY];
                             
                             // Accumula valore pesato della cella vicina
                             weightedSum += field[gridX][gridY] * weight;
