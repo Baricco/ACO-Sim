@@ -30,6 +30,16 @@ public class Ant extends GameObject {
     private Coord lastPheromonePosition;
     private double lastPheromoneTime = -1;
 
+    // Tracking temporale per scoperta cibo
+    private double lastFoodDiscoveryTime = 0;          // quanto tempo ci ha messo a trovare il cibo
+    private double lastNestDiscoveryTime = 0;          // quanto tempo ci ha messo a trovare il nido
+    private double lastTripTime = 0;                   // quanto tempo ci ha messo a fare un viaggio
+    private double meanTripTime = 0;                   // tempo medio di viaggio
+
+    
+    private double startTrackTime = 0;                 // Tempo di inizio tracking
+    private int tripNumber = 0;                        // Numero di viaggi effettuati
+
     public Ant(double mapWidth, double mapHeight, Nest nest) {
         super(GameObjType.ANT, GameObject.getNewSerialNumber(), ANT_SIZE, GameObject.generateRandomPosition(mapWidth, mapHeight, ANT_SIZE));
         this.direction = new Coord(0, 0);
@@ -43,6 +53,7 @@ public class Ant extends GameObject {
         
         // INIZIALIZZA tracking temporale
         this.lastPheromonePosition = null;
+        
     }
 
     public Ant(Coord position, double mapWidth, double mapHeight, Nest nest) {
@@ -67,7 +78,6 @@ public class Ant extends GameObject {
         updateAngle();
 
     }
-
     
     private void updateDirection(double deltaTime) {
         
@@ -81,9 +91,16 @@ public class Ant extends GameObject {
             // Controlla se è abbastanza vicina al nido per consegnare il cibo
             if (distanceToNest < nest.getSize() / 2 + this.getSize() / 2) {
                 // Consegna il cibo al nido
-                GameObject droppedFood = this.dropFood();
+                this.dropFood();            // il cibo viene buttato
                 nest.incrementFoodCount();
                 
+                // Aggiorna il tempo di viaggio
+                this.lastNestDiscoveryTime = System.nanoTime() - this.startTrackTime;                       // tempo impiegato dal cibo al nido
+                if (this.lastFoodDiscoveryTime > 0) this.lastTripTime += this.lastFoodDiscoveryTime;        // tempo impiegato per andare e tornare
+                this.meanTripTime = this.meanTripTime + (this.lastTripTime / ++this.tripNumber);            // aggiorna il tempo medio di viaggio
+                
+                this.startTrackTime = System.nanoTime();                                                    // Reset per il prossimo viaggio
+
                 this.lastPheromonePosition = null; // Reset per nuovo percorso
                 
                 // Dopo aver consegnato, continua con movimento casuale
@@ -181,6 +198,10 @@ public class Ant extends GameObject {
         if (food != null && food.isType(GameObjType.FOOD)) {
             this.foodLoad = food;
             food.disable();
+
+            // Aggiorna il tempo di scoperta del cibo
+            this.lastFoodDiscoveryTime = System.nanoTime() - this.startTrackTime;           // tempo impiegato per trovare il cibo  
+            this.startTrackTime = System.nanoTime();                                        // Reset per il prossimo viaggio          
         }
     }
 

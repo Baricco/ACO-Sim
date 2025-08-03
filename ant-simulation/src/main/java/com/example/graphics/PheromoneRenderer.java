@@ -11,8 +11,9 @@ public class PheromoneRenderer {
     
     private static final Random RANDOM = new Random();
 
-    private static final double RANDOM_OFFSET = 0.75; // Per jitter casuale
-    private static final double SAMPLING_FACTOR = 0.5; // Riduce il numero di punti renderizzati
+    private static final double RANDOM_OFFSET = 0.75;           // Per jitter casuale
+    private static final double SAMPLING_FACTOR = 0.5;          // Riduce il numero di punti renderizzati
+    private static final double ALPHA_FACTOR = 0.75;            // Fattore di opacità per i feromoni
 
     private boolean renderingEnabled = true;
     
@@ -64,7 +65,7 @@ public class PheromoneRenderer {
         // Raggio basato su intensità
         double radius = Pheromone.PHEROMONE_SIZE * (intensity / Pheromone.MAX_INTENSITY);
 
-        Color color = Pheromone.getColorWithAlpha(type, intensity);
+        Color color = Pheromone.getColorWithAlpha(type, intensity * ALPHA_FACTOR);
 
         canvas.renderCircle(x + RANDOM.nextGaussian() * RANDOM_OFFSET, y + RANDOM.nextGaussian() * RANDOM_OFFSET, radius, color);
     }

@@ -150,8 +150,95 @@ public class DensityFieldManager {
                 if (field[x][y] < MIN_INTENSITY) field[x][y] = 0;
             }
         });
+
+        // diffusione
+        applyDiffusion(field, deltaTime);
+
     }
     
+
+    private void applyDiffusion(double[][] field, double deltaTime) {
+        // Calcola intensità diffusione basata su deltaTime
+        // Più deltaTime = più diffusione per mantenere consistenza temporale
+
+        final double DIFFUSION_RATE = 0.25; // Fattore di diffusione
+
+        double diffusion = DIFFUSION_RATE * deltaTime;
+        
+        // Array temporaneo per evitare race conditions durante il calcolo
+        // Non possiamo modificare 'field' mentre lo leggiamo
+        double[][] tempField = new double[gridWidth][gridHeight];
+
+
+        final double[][] GAUSSIAN_KERNEL_3x3 = {
+            {0.077847, 0.123317, 0.077847},
+            {0.123317, 0.195346, 0.123317}, 
+            {0.077847, 0.123317, 0.077847}
+        };
+        
+        // Itera su ogni cella della griglia
+        for (int x = 0; x < gridWidth; x++) {
+            for (int y = 0; y < gridHeight; y++) {
+                
+                // Skip celle vuote per ottimizzazione - non calcolare diffusione su zero
+                if (field[x][y] < MIN_INTENSITY) {
+                    tempField[x][y] = 0; // Assicurati che sia zero
+                    continue;
+                }
+                
+                // Applica kernel gaussiano 3x3 centrato sulla cella corrente
+                double weightedSum = 0.0;   // Somma pesata usando kernel gaussiano
+                double totalWeight = 0.0;   // Peso totale (per normalizzazione ai bordi)
+                
+                // Itera attraverso il kernel 3x3
+                for (int kernelX = 0; kernelX < 3; kernelX++) {
+                    for (int kernelY = 0; kernelY < 3; kernelY++) {
+                        
+                        // Calcola coordinate nella griglia principale
+                        // Kernel è centrato, quindi offset di -1
+                        int gridX = x + kernelX - 1;  // -1, 0, +1 offset dal centro
+                        int gridY = y + kernelY - 1;  // -1, 0, +1 offset dal centro
+                        
+                        // Verifica bounds - gestisce automaticamente i bordi
+                        if (isValidCell(gridX, gridY)) {
+                            
+                            // Ottieni peso gaussiano pre-calcolato dal kernel
+                            double weight = GAUSSIAN_KERNEL_3x3[kernelX][kernelY];
+                            
+                            // Accumula valore pesato della cella vicina
+                            weightedSum += field[gridX][gridY] * weight;
+                            
+                            // Accumula peso totale per normalizzazione
+                            totalWeight += weight;
+                        }
+                    }
+                }
+                
+                // Calcola media pesata gaussiana
+                // Se totalWeight < 1.0 significa che siamo al bordo e alcuni vicini mancano
+                double gaussianAverage = (totalWeight > 0) ? weightedSum / totalWeight : field[x][y];
+                
+                // Applica interpolazione lineare tra valore originale e media gaussiana
+                // Formula: nuovo = originale * (1-diffusion) + media_gaussiana * diffusion
+                // Questo conserva la massa totale del sistema e previene instabilità numeriche
+                tempField[x][y] = field[x][y] * (1.0 - diffusion) + gaussianAverage * diffusion;
+                
+                // Clamp per sicurezza numerica - previene valori negativi o troppo alti
+                if (tempField[x][y] < 0) tempField[x][y] = 0;
+                if (tempField[x][y] > MAX_INTENSITY) tempField[x][y] = MAX_INTENSITY;
+            }
+        }
+        
+        // Copia risultato finale nel campo originale
+        // Usa System.arraycopy per prestazioni ottimali
+        for (int x = 0; x < gridWidth; x++) {
+            System.arraycopy(tempField[x], 0, field[x], 0, gridHeight);
+        }
+    }
+
+
+
+
     /**
      * Ottieni intensità totale in una posizione - per navigazione formiche
      */
