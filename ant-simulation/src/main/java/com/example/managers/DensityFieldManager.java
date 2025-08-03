@@ -27,8 +27,8 @@ public class DensityFieldManager {
     private static final double JITTER_RADIUS = MIN_DISTANCE_BETWEEN_PHEROMONES * 0.15;
     private static final double MIN_TIME_BETWEEN_PHEROMONES = 0.025; // secondi
     
-    private static final double DIFFUSION_RATE = 0.25; // Fattore di diffusione per il campo
-    private static final double[][] GAUSSIAN_KERNEL = {
+    private static final double DIFFUSION_RATE = 0.25;              // Fattore di diffusione per il campo
+    private static final double[][] GAUSSIAN_KERNEL = {             // Kernel gaussiano 3x3 pre-calcolato
         {0.077847, 0.123317, 0.077847},
         {0.123317, 0.195346, 0.123317}, 
         {0.077847, 0.123317, 0.077847}

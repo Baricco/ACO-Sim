@@ -37,7 +37,7 @@ public class Ant extends GameObject {
     private double meanTripTime = 0;                   // tempo medio di viaggio
 
     
-    private double startTrackTime = 0;                 // Tempo di inizio tracking
+    private double startTrackTime;                 // Tempo di inizio tracking
     private int tripNumber = 0;                        // Numero di viaggi effettuati
 
     public Ant(double mapWidth, double mapHeight, Nest nest) {
@@ -59,6 +59,7 @@ public class Ant extends GameObject {
     public Ant(Coord position, double mapWidth, double mapHeight, Nest nest) {
         this(mapWidth, mapHeight, nest);
         this.pos = position;
+        this.startTrackTime = System.nanoTime(); // Inizializza il tempo di tracking
     }
 
     @Override
@@ -96,8 +97,12 @@ public class Ant extends GameObject {
                 
                 // Aggiorna il tempo di viaggio
                 this.lastNestDiscoveryTime = System.nanoTime() - this.startTrackTime;                       // tempo impiegato dal cibo al nido
-                if (this.lastFoodDiscoveryTime > 0) this.lastTripTime += this.lastFoodDiscoveryTime;        // tempo impiegato per andare e tornare
-                this.meanTripTime = this.meanTripTime + (this.lastTripTime / ++this.tripNumber);            // aggiorna il tempo medio di viaggio
+                
+                this.lastTripTime = this.lastNestDiscoveryTime;                                             // tempo totale di viaggio (prima metà)
+                if (this.lastFoodDiscoveryTime > 0) this.lastTripTime += this.lastFoodDiscoveryTime;        // tempo totale di viaggio (seconda metà)
+                
+                this.meanTripTime = (this.meanTripTime * this.tripNumber + this.lastTripTime) / (this.tripNumber + 1); // aggiorna il tempo medio di viaggio
+                this.tripNumber++;
                 
                 this.startTrackTime = System.nanoTime();                                                    // Reset per il prossimo viaggio
 
@@ -228,6 +233,30 @@ public class Ant extends GameObject {
         this.lastPheromoneTime = time; 
     }
 
+    public double getLastFoodDiscoveryTime() {
+        return lastFoodDiscoveryTime;
+    }
+
+    public double getLastNestDiscoveryTime() {
+        return lastNestDiscoveryTime;
+    }
+
+    public double getLastTripTime() {
+        return lastTripTime;
+    }
+
+    public double getMeanTripTime() {
+        return meanTripTime;
+    }
+
+    public double getStartTrackTime() {
+        return startTrackTime;
+    }
+
+    public int getTripNumber() {
+        return tripNumber;
+    }
+
     // Getters per la visualizzazione
     public double getAngle() { return angle; }
     public Color getColor() { return ANT_COLOR; }
@@ -242,5 +271,9 @@ public class Ant extends GameObject {
             direction.x, direction.y,
             this.hasFoodLoad() ? this.foodLoad.getSerialNumber() : "None"
         );
+    }
+
+    public void setSize(double newSize) {
+        this.size = newSize;
     }
 }

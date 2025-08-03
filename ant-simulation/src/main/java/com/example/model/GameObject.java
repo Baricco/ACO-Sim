@@ -25,7 +25,7 @@ public abstract class GameObject {
     protected Coord pos;
     protected int serialNumber;
     protected boolean enabled;
-    protected int size;
+    protected double size;
     protected Image sprite;
 
     public GameObject(Coord pos, GameObjType type, int serialNumber, int size) {
@@ -60,7 +60,7 @@ public abstract class GameObject {
     
     public Coord getPos() { return new Coord(this.pos); }
     
-    public int getSize() { return this.size; }
+    public double getSize() { return this.size; }
     
     public boolean isEnabled() { return enabled; }
 
@@ -113,6 +113,17 @@ public abstract class GameObject {
         double y = margin + RANDOM.nextDouble() * availableHeight;
 
         return new Coord(x, y);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null || !(obj instanceof GameObject)) return false;
+        return (this == obj) || (this.serialNumber == ((GameObject) obj).serialNumber);
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(serialNumber);
     }
 
     // Metodo astratto per l'update della logica

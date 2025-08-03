@@ -25,6 +25,13 @@ public class SimulationController implements Initializable {
     @FXML private Button pauseButton;
     @FXML private Label statusLabel;
     @FXML private Label statsLabel;
+
+    @FXML private Label serialNumberLabel;
+    @FXML private Label startTimeLabel;
+    @FXML private Label LFDTLabel;
+    @FXML private Label LNDTLabel;
+    @FXML private Label LTTLabel;
+    @FXML private Label MTTLabel;
     
     private GameCanvas gameCanvas;
     private SimulationManager simulationManager;
@@ -67,13 +74,31 @@ public class SimulationController implements Initializable {
     }
 
     private void updateStatsLabel(long activeAnts, long activeFood, double fps) {
-        // Aggiorna la UI sul thread JavaFX
+        
+        double antStats[] = simulationManager.getSelectedAntStats();
+
+        if (antStats != null) {
+            // Aggiorna le statistiche delle formiche nel rightPane
+            Platform.runLater(() -> {
+                serialNumberLabel.setText(antStats[0] == -1 ? "N/A" : (int)antStats[0] + "");
+                startTimeLabel.setText(antStats[1] == -1 ? "N/A" : antStats[1] + " s");
+                LFDTLabel.setText(antStats[2] == -1 ? "N/A" : antStats[2] + " s");
+                LNDTLabel.setText(antStats[3] == -1 ? "N/A" : antStats[3] + " s");
+                LTTLabel.setText(antStats[4] == -1 ? "N/A" : antStats[4] + " s");
+                MTTLabel.setText(antStats[5] == -1 ? "N/A" : antStats[5] + " s");
+            });
+        }
+
+
+        // Aggiorna la Top UI sul thread JavaFX
         Platform.runLater(() -> {
             if (statsLabel != null) {
                 statsLabel.setText(String.format("Ants: %d | Food: %d | FPS: %.0f", 
                     activeAnts, activeFood, fps));
             }
         });
+
+
     }
 
     private void waitForCanvasReady() {
@@ -134,6 +159,22 @@ public class SimulationController implements Initializable {
         updateUI();
     }
     */
+
+    @FXML
+    private void selectNextAnt() {
+        if (simulationManager == null) return;
+        
+        simulationManager.selectNextAnt();
+        updateUI();
+    }
+
+    @FXML
+    private void selectPreviousAnt() {
+        if (simulationManager == null) return;
+        
+        simulationManager.selectPreviousAnt();
+        updateUI();
+    }
 
     @FXML  
     private void handlePause() {

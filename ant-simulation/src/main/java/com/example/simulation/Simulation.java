@@ -26,8 +26,10 @@ public class Simulation {
     protected List<Food> foods = Collections.synchronizedList(new ArrayList<>());
     protected List<FoodClump> foodClumps = Collections.synchronizedList(new ArrayList<>());
 
-    protected DensityFieldManager densityManager;
+    protected int selectedAntIndex;                   // indice della formica selezionata per visualizzazione dettagli
 
+    protected DensityFieldManager densityManager;
+    
     protected boolean exit = false;
 
     protected double mapWidth;
@@ -41,6 +43,7 @@ public class Simulation {
         this.FOOD_CLUMP_SIZE = 0;                       // Non usato in questa simulazione
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
+        this.selectedAntIndex = 0;                     // Inizializza l'indice della formica selezionata
     }
 
     public Simulation(int nestsNumber, int antsNumber, int foodClumpSize, int foodClumpNumber, double mapWidth, double mapHeight) {
@@ -51,6 +54,7 @@ public class Simulation {
         this.FOODS_NUMBER = foodClumpSize * foodClumpNumber; // Numero totale di pezzi di cibo
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
+        this.selectedAntIndex = 0;                     // Inizializza l'indice della formica selezionata
     }
 
 
@@ -139,10 +143,25 @@ public class Simulation {
     }
 
     public List<FoodClump> getOriginalFoodClumps() { 
-    synchronized(foodClumps) {
-        return foodClumps; 
+        synchronized(foodClumps) {
+            return foodClumps; 
+        }
     }
-}
+
+    public Ant getSelectedAnt() {
+        synchronized(ants) {
+            if (selectedAntIndex < ants.size() && selectedAntIndex >= 0) {
+                return ants.get(selectedAntIndex);
+            }
+            return null;
+        }
+    }
+
+    public void setSelectedAnt(Ant ant) {
+        synchronized(ants) {
+            this.selectedAntIndex = ants.indexOf(ant);
+        }
+    }
 
     public List<Ant> getAnts() { 
         synchronized(ants) {

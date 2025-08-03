@@ -86,18 +86,29 @@ public class GameCanvas extends Canvas {
     /**
      * Renderizza una lista di formiche
      */
-    public void renderAnts(List<Ant> ants) {
+    public void renderAnts(List<Ant> ants, Ant selectedAnt) {
         for (Ant ant : ants) {
             if (ant.isEnabled()) {
-                renderAnt(ant);
+                renderAnt(ant, ant == selectedAnt);
             }
         }
     }
     
+    private void renderAnt(Ant ant, boolean isSelected) {
+        // Disegna la formica con uno sprite se selezionata, se no usa lo sprite normale
+        if (isSelected) renderAnt(ant, loadImageCached("selectedAntSprite.png"));
+        else renderAnt(ant);
+        
+    }
+
+    private void renderAnt(Ant ant) {
+        renderAnt(ant, ant.getSprite());
+    }
+
     /**
      * Renderizza una singola formica
      */
-    private void renderAnt(Ant ant) {
+    private void renderAnt(Ant ant, Image sprite) {
         
         Coord pos = ant.getPos();
         double size = ant.getSize();
@@ -112,7 +123,7 @@ public class GameCanvas extends Canvas {
 
         // Se la formica ha uno sprite, disegnalo
         if (ant.hasSprite()) {
-            gc.drawImage(ant.getSprite(), -size/2, -size/2, size, size);
+            gc.drawImage(sprite, -size/2, -size/2, size, size);
         }
         else {
             

@@ -21,6 +21,9 @@ public class SimulationManager {
 
     private static final double FRAME_SKIP = 3;         // Aggiorna i feromoni ogni 3 frame per ridurre il carico
 
+    private static final double SELECTED_ANT_SIZE_MULTIPLIER = 1.5; // Moltiplicatore della dimensione della formica selezionata
+
+
     private Simulation currentSimulation;
     private GameCanvas canvas;
     private AnimationTimer gameLoop;
@@ -176,6 +179,12 @@ public class SimulationManager {
 
         // Aggiorna formiche
         for (Ant ant : ants) {
+
+            if (ant.equals(currentSimulation.getSelectedAnt())) {
+                ant.setSize(Ant.ANT_SIZE * SELECTED_ANT_SIZE_MULTIPLIER); // Aumenta la dimensione della formica selezionata
+            } else {
+                ant.setSize(Ant.ANT_SIZE); // Reimposta la dimensione normale
+            }
             ant.update(deltaTime);
 
             // Rilascia feromoni nel density field
@@ -256,6 +265,30 @@ public class SimulationManager {
         }
     }
 
+    public void selectNextAnt() {
+        if (currentSimulation == null) return;
+        
+        Ant selectedAnt = currentSimulation.getSelectedAnt();
+        List<Ant> ants = currentSimulation.getAnts();
+
+        if (ants.isEmpty()) return;
+
+        int nextIndex = (selectedAnt == null) ? 0 : (ants.indexOf(selectedAnt) + 1) % ants.size();
+        currentSimulation.setSelectedAnt(ants.get(nextIndex));
+    }
+
+    public void selectPreviousAnt() {
+        if (currentSimulation == null) return;
+        
+        Ant selectedAnt = currentSimulation.getSelectedAnt();
+        List<Ant> ants = currentSimulation.getAnts();
+
+        if (ants.isEmpty()) return;
+
+        int prevIndex = (selectedAnt == null) ? ants.size() - 1 : (ants.indexOf(selectedAnt) - 1 + ants.size()) % ants.size();
+        currentSimulation.setSelectedAnt(ants.get(prevIndex));
+    }
+
     private void updateFoodClump(Food takenFood) {
         if (currentSimulation == null) return;
         
@@ -307,7 +340,7 @@ public class SimulationManager {
             canvas.renderFoodClumps(foodClumps);
         }
 
-        canvas.renderAnts(ants);
+        canvas.renderAnts(ants, currentSimulation.getSelectedAnt());
         canvas.renderNests(nests);
 
         long otherRenderTime = System.nanoTime() - otherRenderStart;
@@ -328,6 +361,26 @@ public class SimulationManager {
             
             statsCallback.updateStats(activeAnts, activeFood, fps);
         }
+    }
+
+    public double[] getSelectedAntStats() {
+        
+        if (currentSimulation == null) return null;
+
+        Ant selectedAnt = currentSimulation.getSelectedAnt();
+
+        if (selectedAnt == null) return null;
+
+        double[] stats = new double[6];
+
+        stats[0] = selectedAnt.getSerialNumber();
+        stats[1] = Math.round((selectedAnt.getStartTrackTime() / 1_000_000_000.0) * 100.0) / 100.0;
+        stats[2] = Math.round((selectedAnt.getLastFoodDiscoveryTime() / 1_000_000_000.0) * 100.0) / 100.0;
+        stats[3] = Math.round((selectedAnt.getLastNestDiscoveryTime() / 1_000_000_000.0) * 100.0) / 100.0;
+        stats[4] = Math.round((selectedAnt.getLastTripTime() / 1_000_000_000.0) * 100.0) / 100.0;
+        stats[5] = Math.round((selectedAnt.getMeanTripTime() / 1_000_000_000.0) * 100.0) / 100.0;
+
+        return stats;
     }
 
     public void togglePause() {

@@ -12,7 +12,7 @@ public class DemoSimulation extends Simulation {
 
     public DemoSimulation(double mapWidth, double mapHeight) {
         super(NESTS_NUMBER, ANTS_NUMBER, FOODS_NUMBER, mapWidth, mapHeight);
-
+        this.selectedAntIndex = -1;                    // Inizializza l'indice della formica selezionata
     }
 
     @Override
