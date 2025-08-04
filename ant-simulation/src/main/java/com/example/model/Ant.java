@@ -4,19 +4,28 @@ import java.util.Random;
 
 import com.example.graphics.Coord;
 import com.example.graphics.GameCanvas;
+import com.example.managers.DensityFieldManager;
 
 import javafx.scene.paint.Color;
 
 public class Ant extends GameObject {
 
+    public enum ANT_BEHAVIOUR {
+        RANDOM,
+        FOOD_PHEROMONE,
+        ALL_PHEROMONES              // FOOD + HOME PHEROMONES
+    }
+
     // Costanti
     public static final int ANT_SIZE = 20;
+    public static final int ANT_FEEL_RADIUS = 50;               // Raggio di percezione per i feromoni
+    public static final Color ANT_FEEL_COLOR = Color.rgb(255, 255, 0, 0.2); // Colore per il raggio di percezione
     public static final Color ANT_COLOR = Color.RED;
-    public static final double ANT_SPEED = 2.0; // pixel/secondo
+    public static final double ANT_SPEED = 120.0; // pixel/secondo
     public static final int WINDOW_BOUND_MARGIN = 2;
 
     private static final Random RANDOM = new Random();
-    private static final double SMOOTH_MOVEMENT_FACTOR = 20;
+    private static final double SMOOTH_MOVEMENT_FACTOR = 0.1;
 
     // Stato della formica
     protected Coord direction;
@@ -26,6 +35,10 @@ public class Ant extends GameObject {
     protected double angle; // Per la rotazione visuale
     protected Nest nest; // Riferimento al nido della formica
 
+    // Comportamento della formica
+    protected ANT_BEHAVIOUR behaviour;
+    protected DensityFieldManager densityFieldManager;          // Gestore del campo di densità per i feromoni
+    
     // Tracking temporale per feromoni
     private Coord lastPheromonePosition;
     private double lastPheromoneTime = -1;
@@ -42,7 +55,7 @@ public class Ant extends GameObject {
 
     public Ant(double mapWidth, double mapHeight, Nest nest) {
         super(GameObjType.ANT, GameObject.getNewSerialNumber(), ANT_SIZE, GameObject.generateRandomPosition(mapWidth, mapHeight, ANT_SIZE));
-        this.direction = new Coord(0, 0);
+        this.direction = generateRandomVector();
         this.foodLoad = new VoidObj();          // new Food(pos);
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
@@ -60,6 +73,7 @@ public class Ant extends GameObject {
         this(mapWidth, mapHeight, nest);
         this.pos = position;
         this.startTrackTime = System.nanoTime(); // Inizializza il tempo di tracking
+        this.behaviour = this.nest.getBehaviour();                                      // Comportamento iniziale della formica
     }
 
     @Override
@@ -82,60 +96,136 @@ public class Ant extends GameObject {
     
     private void updateDirection(double deltaTime) {
         
-        // se la formica ha un foodLoad, torna verso il Nest
-        if (this.hasFoodLoad()) {
-            Coord nestCenter = this.nest.getCenter();
-            Coord antCenter = this.getCenter();
-            
-            double distanceToNest = antCenter.distance(nestCenter);
+        switch(behaviour) {
+            case RANDOM:
+                randomBehaviour();
+                break;
+            case FOOD_PHEROMONE:
+                foodPheromonesBehaviour();
+                break;
+            case ALL_PHEROMONES:
+                // TODO: Comportamento basato su tutti i feromoni
+                foodPheromonesBehaviour();
+                break;
+        }
+    }
 
-            // Controlla se è abbastanza vicina al nido per consegnare il cibo
-            if (distanceToNest < nest.getSize() / 2 + this.getSize() / 2) {
-                // Consegna il cibo al nido
-                this.dropFood();            // il cibo viene buttato
-                nest.incrementFoodCount();
-                
-                // Aggiorna il tempo di viaggio
-                this.lastNestDiscoveryTime = System.nanoTime() - this.startTrackTime;                       // tempo impiegato dal cibo al nido
-                
-                this.lastTripTime = this.lastNestDiscoveryTime;                                             // tempo totale di viaggio (prima metà)
-                if (this.lastFoodDiscoveryTime > 0) this.lastTripTime += this.lastFoodDiscoveryTime;        // tempo totale di viaggio (seconda metà)
-                
-                this.meanTripTime = (this.meanTripTime * this.tripNumber + this.lastTripTime) / (this.tripNumber + 1); // aggiorna il tempo medio di viaggio
-                this.tripNumber++;
-                
-                this.startTrackTime = System.nanoTime();                                                    // Reset per il prossimo viaggio
-
-                this.lastPheromonePosition = null; // Reset per nuovo percorso
-                
-                // Dopo aver consegnato, continua con movimento casuale
-                // Non fare return qui, lascia che il codice continui per aggiornare la direzione
-            }
-
-            // Se non ha ancora consegnato o dopo aver consegnato, calcola la direzione
-            if (this.hasFoodLoad()) {
-                // Se ha ancora del cibo, vai verso il nido
-                this.direction = calcDirectionToNest();
-                
-            } else {
-                // Se ha appena consegnato o non ha cibo, movimento casuale
-                Coord randomDirection = generateRandomVector();
-                randomDirection.multiply(SMOOTH_MOVEMENT_FACTOR);
-                this.direction.sum(randomDirection);
-                this.direction.normalize();
-            }
-            
-        } else {
-            // Movimento casuale quando non ha cibo
-            Coord nextDirection = generateRandomVector();
-            nextDirection.multiply(SMOOTH_MOVEMENT_FACTOR);
-            
-            this.direction.sum(nextDirection);
-            this.direction.normalize();
+    private void foodPheromonesBehaviour() {
+        // Gestisci prima il caso di ritorno con cibo
+        if (handleFoodReturn()) return;
+        
+        // Se manca il density manager, usa comportamento casuale
+        if (this.densityFieldManager == null) {
+            updateDirectionRandomly();
+            return;
         }
         
-        // Applica la velocità finale
-        this.direction.multiply(ANT_SPEED / deltaTime);
+        // Segui il gradiente dei feromoni del cibo
+        followFoodPheromoneGradient();
+    }
+
+    private void randomBehaviour() {
+        // Gestisci il caso di ritorno con cibo
+        if (handleFoodReturn()) {
+            // Se dopo il drop non ha più cibo, fai movimento casuale
+            if (!this.hasFoodLoad()) {
+                updateDirectionRandomly();
+            }
+            return;
+        }
+        
+        // Movimento casuale quando non ha cibo
+        updateDirectionRandomly();
+    }
+
+    private void updateDirectionRandomly() {
+        Coord randomDirection = handleRandomSteering();
+        applyDirectionChange(randomDirection);
+    }
+
+    private void applyDirectionChange(Coord newDirection) {
+
+        if (newDirection == null || newDirection.length() <= 0) return;
+
+        newDirection.multiply(SMOOTH_MOVEMENT_FACTOR);
+
+        this.direction.sum(newDirection);
+
+        this.direction.normalize();
+    }
+
+    private void followFoodPheromoneGradient() {
+        Coord pheromoneDirection = this.densityFieldManager.getPheromoneGradient(
+            this.getCenter(), Pheromone.PheromoneType.FOOD_TRAIL);
+        
+        double localIntensity = this.densityFieldManager.getTotalIntensity(
+            this.getCenter(), Pheromone.PheromoneType.FOOD_TRAIL);
+        
+        // Debug periodico per alcune formiche
+        if (this.serialNumber == 100) {
+            System.out.printf("Ant %d: Gradient=%.3f, LocalIntensity=%.3f, UsingPheromones=%s\n", 
+                serialNumber, pheromoneDirection.length(), localIntensity, 
+                (pheromoneDirection.length() > 0.001) ? "YES" : "NO");
+        }
+        
+        // Se i feromoni sono troppo deboli, usa movimento casuale
+        if (pheromoneDirection.length() <= 0.001) {
+            pheromoneDirection = handleRandomSteering();
+        } else {
+            pheromoneDirection.normalize();
+        }
+        
+        applyDirectionChange(pheromoneDirection);
+    }
+
+    private Coord handleRandomSteering() {
+        Coord randomDirection;
+        do {
+            randomDirection = generateRandomVector();
+        } while (randomDirection.dot(this.direction) <= 0);
+        
+        return randomDirection;
+    }
+
+    private boolean handleFoodReturn() {
+        if (!this.hasFoodLoad()) return false;
+        
+        dropFoodIfOnNest();
+        
+        // Se ha ancora cibo dopo il tentativo di drop, vai verso il nido
+        if (this.hasFoodLoad()) {
+            this.direction = calcDirectionToNest();
+        }
+        
+        return true; // Indica che la formica aveva cibo e il comportamento è stato gestito
+    }
+
+    private void dropFoodIfOnNest() {
+        Coord nestCenter = this.nest.getCenter();
+        Coord antCenter = this.getCenter();
+        
+        double distanceToNest = antCenter.distance(nestCenter);
+
+        // Controlla se è abbastanza vicina al nido per consegnare il cibo
+        if (distanceToNest < nest.getSize() / 2 + this.getSize() / 2) {
+            // Consegna il cibo al nido
+            this.dropFood();            // il cibo viene buttato
+            nest.incrementFoodCount();
+            
+            // Aggiorna il tempo di viaggio
+            this.lastNestDiscoveryTime = System.nanoTime() - this.startTrackTime;                       // tempo impiegato dal cibo al nido
+            
+            this.lastTripTime = this.lastNestDiscoveryTime;                                             // tempo totale di viaggio (prima metà)
+            if (this.lastFoodDiscoveryTime > 0) this.lastTripTime += this.lastFoodDiscoveryTime;        // tempo totale di viaggio (seconda metà)
+            
+            this.meanTripTime = (this.meanTripTime * this.tripNumber + this.lastTripTime) / (this.tripNumber + 1); // aggiorna il tempo medio di viaggio
+            this.tripNumber++;
+            
+            this.startTrackTime = System.nanoTime();                                                    // Reset per il prossimo viaggio
+
+            this.lastPheromonePosition = null; // Reset per nuovo percorso
+            
+        }
     }
 
     protected Coord calcDirectionToNest() {
@@ -161,8 +251,8 @@ public class Ant extends GameObject {
         if (direction == null) return;
 
         Coord movement = new Coord(
-            direction.x * deltaTime,
-            direction.y * deltaTime
+            direction.x * deltaTime * ANT_SPEED,
+            direction.y * deltaTime * ANT_SPEED
         );
         
         this.movePos(movement);
@@ -216,7 +306,12 @@ public class Ant extends GameObject {
         return droppedFood;
     }
 
-    // NUOVI METODI per tracking feromoni intelligenti
+    
+    public void attachDensityManager(DensityFieldManager densityFieldManager) {
+        if (densityFieldManager == null || this.densityFieldManager != null) return;
+        this.densityFieldManager = densityFieldManager;
+    }
+
     public Coord getLastPheromonePosition() { 
         return lastPheromonePosition; 
     }

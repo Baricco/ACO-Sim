@@ -10,6 +10,8 @@ public class Nest extends GameObject {
 
     private final Simulation simulationParent;
 
+    private final Ant.ANT_BEHAVIOUR antsBehaviour;
+
     private int foodCount;          // Numero di pezzi di cibo portati al nido
 
     private int antNumber;
@@ -21,6 +23,7 @@ public class Nest extends GameObject {
         this.antNumber = antNumber;
         this.simulationParent = simulationParent;
         this.foodCount = 0; // Inizializza il conteggio del cibo
+        this.antsBehaviour = simulationParent.getBehaviour();
     }
 
     public Nest(int antNumber, Coord pos, Simulation simulationParent) {
@@ -65,6 +68,10 @@ public class Nest extends GameObject {
         // ferma il nido dopo aver spawnato le formiche
         this.stop();
    
+    }
+
+    Ant.ANT_BEHAVIOUR getBehaviour() {
+        return this.antsBehaviour;
     }
 
 }

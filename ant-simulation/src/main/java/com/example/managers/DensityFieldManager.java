@@ -23,16 +23,19 @@ public class DensityFieldManager {
     private static final double  MIN_INTENSITY = Pheromone.MIN_INTENSITY;
     
     // Costanti per limitare il piazzamento dei feromoni
-    private static final double MIN_DISTANCE_BETWEEN_PHEROMONES = Ant.ANT_SPEED * 2;
+    private static final double MIN_DISTANCE_BETWEEN_PHEROMONES = Pheromone.PHEROMONE_SIZE; // Distanza minima tra i feromoni
     private static final double JITTER_RADIUS = MIN_DISTANCE_BETWEEN_PHEROMONES * 0.15;
     private static final double MIN_TIME_BETWEEN_PHEROMONES = 0.025; // secondi
     
-    private static final double DIFFUSION_RATE = 0.25;              // Fattore di diffusione per il campo
+    private static final double DIFFUSION_RATE = 0.5;              // Fattore di diffusione per il campo
     private static final double[][] GAUSSIAN_KERNEL = {             // Kernel gaussiano 3x3 pre-calcolato
         {0.077847, 0.123317, 0.077847},
         {0.123317, 0.195346, 0.123317}, 
         {0.077847, 0.123317, 0.077847}
     };
+
+    private double totalFoodIntensity;
+    private double totalHomeIntensity;
 
     private static final Random RANDOM = new Random();
 
@@ -46,12 +49,18 @@ public class DensityFieldManager {
         
         System.out.printf("DensityFieldManager initialized: %dx%d grid (%.1f cell size)\n", 
             gridWidth, gridHeight, CELL_SIZE);
+
+        this.totalFoodIntensity = 0;
+        this.totalHomeIntensity = 0;
     }
     
     /**
      * Aggiunge feromone al campo di densità
      */
     public void addPheromone(Coord pos, Pheromone.PheromoneType type, double  intensity) {
+
+        if (intensity <= Pheromone.MIN_INTENSITY) return;
+
         int x = (int) (pos.x / CELL_SIZE);
         int y = (int) (pos.y / CELL_SIZE);
         
@@ -60,8 +69,16 @@ public class DensityFieldManager {
                 
             targetField[x][y] = Math.min(MAX_INTENSITY, targetField[x][y] + intensity);
         }
+
+        switch(type) {
+            case FOOD_TRAIL:
+                totalFoodIntensity += intensity;
+                break;
+            case HOME_TRAIL:
+                totalHomeIntensity += intensity;
+                break;
+        }
     }
-    
 
     public void addPheromone(Ant ant, Pheromone.PheromoneType type) {
         
@@ -77,6 +94,8 @@ public class DensityFieldManager {
         // Aggiorna lo stato della formica
         ant.setLastPheromonePosition(jitteredPosition);
         ant.setLastPheromoneTime(getCurrentTime());
+
+
     }
     
     /**
@@ -157,6 +176,9 @@ public class DensityFieldManager {
                 if (field[x][y] < MIN_INTENSITY) field[x][y] = 0;
             }
         });
+
+        this.totalFoodIntensity *= frameDecay;
+        this.totalHomeIntensity *= frameDecay;
 
         // diffusione
         applyDiffusion(field, deltaTime);
@@ -255,35 +277,25 @@ public class DensityFieldManager {
      * Calcola gradiente per navigazione formiche
      */
     public Coord getPheromoneGradient(Coord position, Pheromone.PheromoneType type) {
+        
+        int delta = Ant.ANT_FEEL_RADIUS;
+
         int x = (int) (position.x / CELL_SIZE);
         int y = (int) (position.y / CELL_SIZE);
 
         double [][] field = getDensityField(type);
         
-        // Sampling 3x3 invece di semplice differenza finita per maggiore precisione
-        double totalDx = 0, totalDy = 0;
-        int samples = 0;
-        
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dy = -1; dy <= 1; dy++) {
-                if (dx == 0 && dy == 0) continue;
-                
-                double value = getFieldValue(field, x + dx, y + dy);
-                if (value > MIN_INTENSITY) {
-                    totalDx += dx * value;
-                    totalDy += dy * value;
-                    samples++;
-                }
-            }
-        }
-        
-        if (samples == 0) return new Coord(0, 0);
-        
+        // Componente X (derivata parziale rispetto a x)
+        double gradX = (getFieldValue(field, x+delta, y) - getFieldValue(field, x-delta, y)) / (2.0 * delta);
+
+        // Componente Y (derivata parziale rispetto a y)  
+        double gradY = (getFieldValue(field, x, y+delta) - getFieldValue(field, x, y-delta)) / (2.0 * delta);
+
         // Normalizza e scala
-        Coord gradient = new Coord(totalDx / samples, totalDy / samples);
-        gradient.normalize();
-        gradient.multiply(Ant.ANT_SPEED * 1.5); // Boost per seguire meglio i feromoni
-        
+        Coord gradient = new Coord(gradX, gradY);
+
+        gradient.multiply(2);
+
         return gradient;
     }
     
@@ -334,20 +346,13 @@ public class DensityFieldManager {
     }
     
     public double getAverageIntensity(Pheromone.PheromoneType type) {
-        double [][] field = getDensityField(type);
-            
-        double total = 0;
-        int count = 0;
-        
-        for (int x = 0; x < gridWidth; x++) {
-            for (int y = 0; y < gridHeight; y++) {
-                if (field[x][y] > MIN_INTENSITY) {
-                    total += field[x][y];
-                    count++;
-                }
-            }
+        switch(type) {
+            case FOOD_TRAIL:
+                return this.totalFoodIntensity / (gridWidth * gridHeight);
+            case HOME_TRAIL:
+                return this.totalHomeIntensity / (gridWidth * gridHeight);
+            default:
+                return 0;
         }
-        
-        return count > 0 ? total / count : 0;
     }
 }

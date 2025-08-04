@@ -96,7 +96,15 @@ public class GameCanvas extends Canvas {
     
     private void renderAnt(Ant ant, boolean isSelected) {
         // Disegna la formica con uno sprite se selezionata, se no usa lo sprite normale
-        if (isSelected) renderAnt(ant, loadImageCached("selectedAntSprite.png"));
+        if (isSelected) {
+            // Seleziona lo sprite speciale per la formica selezionata
+            renderAnt(ant, loadImageCached("selectedAntSprite.png"));
+            // Disegna il raggio di percezione della formica
+            gc.setFill(Ant.ANT_FEEL_COLOR);
+            gc.fillOval(ant.getCenter().x - Ant.ANT_FEEL_RADIUS, ant.getCenter().y - Ant.ANT_FEEL_RADIUS, 
+                        Ant.ANT_FEEL_RADIUS * 2, Ant.ANT_FEEL_RADIUS * 2);
+        
+        }
         else renderAnt(ant);
         
     }

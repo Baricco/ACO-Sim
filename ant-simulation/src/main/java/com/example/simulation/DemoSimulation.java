@@ -1,6 +1,7 @@
 package com.example.simulation;
 
 import com.example.graphics.Coord;
+import com.example.model.Ant;
 import com.example.model.Food;
 import com.example.model.Nest;
 
@@ -13,6 +14,7 @@ public class DemoSimulation extends Simulation {
     public DemoSimulation(double mapWidth, double mapHeight) {
         super(NESTS_NUMBER, ANTS_NUMBER, FOODS_NUMBER, mapWidth, mapHeight);
         this.selectedAntIndex = -1;                    // Inizializza l'indice della formica selezionata
+        this.ANTS_BEHAVIOUR = Ant.ANT_BEHAVIOUR.RANDOM; // Comportamento predefinito per la simulazione
     }
 
     @Override

@@ -8,6 +8,7 @@ com\example\managers\HashGrid.class
 com\example\App.class
 com\example\model\Pheromone.class
 com\example\model\FoodClump.class
+com\example\model\Ant$ANT_BEHAVIOUR.class
 com\example\managers\SimulationManager$1.class
 com\example\graphics\PheromoneRenderer.class
 com\example\managers\MultiHashGrid.class

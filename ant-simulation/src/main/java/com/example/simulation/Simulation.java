@@ -20,6 +20,7 @@ public class Simulation {
     public final int NESTS_NUMBER;
     public final int FOOD_CLUMP_NUMBER;
     public final int FOOD_CLUMP_SIZE;          // Numero di pezzi di cibo in un ammasso
+    public Ant.ANT_BEHAVIOUR ANTS_BEHAVIOUR;
 
     protected List<Nest> nests = Collections.synchronizedList(new ArrayList<>());
     protected List<Ant> ants = Collections.synchronizedList(new ArrayList<>());
@@ -44,6 +45,7 @@ public class Simulation {
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
         this.selectedAntIndex = 0;                     // Inizializza l'indice della formica selezionata
+        this.ANTS_BEHAVIOUR = Ant.ANT_BEHAVIOUR.RANDOM; // Comportamento predefinito per la simulazione
     }
 
     public Simulation(int nestsNumber, int antsNumber, int foodClumpSize, int foodClumpNumber, double mapWidth, double mapHeight) {
@@ -55,6 +57,7 @@ public class Simulation {
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
         this.selectedAntIndex = 0;                     // Inizializza l'indice della formica selezionata
+        this.ANTS_BEHAVIOUR = Ant.ANT_BEHAVIOUR.RANDOM; // Comportamento predefinito per la simulazione
     }
 
 
@@ -113,6 +116,7 @@ public class Simulation {
     }
 
     public synchronized void addAnt(Ant ant) {
+        ant.attachDensityManager(densityManager);
         this.ants.add(ant);
     }
 
@@ -180,4 +184,8 @@ public class Simulation {
     
     public double getMapWidth() { return mapWidth; }
     public double getMapHeight() { return mapHeight; }
+
+    public Ant.ANT_BEHAVIOUR getBehaviour() {
+        return this.ANTS_BEHAVIOUR;
+    }
 }

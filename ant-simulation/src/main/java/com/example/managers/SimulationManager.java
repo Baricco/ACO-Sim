@@ -21,7 +21,7 @@ public class SimulationManager {
 
     private static final double FRAME_SKIP = 3;         // Aggiorna i feromoni ogni 3 frame per ridurre il carico
 
-    private static final double SELECTED_ANT_SIZE_MULTIPLIER = 1.5; // Moltiplicatore della dimensione della formica selezionata
+    private static final double SELECTED_ANT_SIZE_MULTIPLIER = 1.25; // Moltiplicatore della dimensione della formica selezionata
 
 
     private Simulation currentSimulation;
@@ -236,13 +236,17 @@ public class SimulationManager {
         DensityFieldManager densityManager = currentSimulation.getDensityManager();
         if (densityManager == null) return;
 
+        Pheromone.PheromoneType type;
+
         if (ant.hasFoodLoad()) {
             // Rilascia FOOD_TRAIL quando torna a casa con cibo
-            densityManager.addPheromone(ant, Pheromone.PheromoneType.FOOD_TRAIL);
+            type = Pheromone.PheromoneType.FOOD_TRAIL;
         } else {
             // Rilascia HOME_TRAIL quando cerca cibo
-            densityManager.addPheromone(ant, Pheromone.PheromoneType.HOME_TRAIL);
+            type = Pheromone.PheromoneType.HOME_TRAIL;
         }
+        
+        densityManager.addPheromone(ant.getCenter(), type, Pheromone.INITIAL_INTENSITY);
     }
 
     private void handleFoodInteraction(List<Ant> ants) {

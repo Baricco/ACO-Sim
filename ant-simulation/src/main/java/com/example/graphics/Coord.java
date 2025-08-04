@@ -67,4 +67,8 @@ public class Coord {
         return Math.sqrt(x * x + y * y);
     }
 
+    public double dot(Coord direction) {
+        return (this.x * direction.x + this.y * direction.y);
+    }
+
 }
