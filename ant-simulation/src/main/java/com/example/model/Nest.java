@@ -6,7 +6,7 @@ import com.example.simulation.Simulation;
 
 public class Nest extends GameObject {
 
-    private static final int NEST_SIZE = 50;
+    private static final int NEST_SIZE = 70;
 
     private final Simulation simulationParent;
 

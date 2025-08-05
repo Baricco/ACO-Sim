@@ -252,13 +252,17 @@ public class Ant extends GameObject {
     }
 
     private void dropFoodIfOnNest() {
-        Coord nestCenter = this.nest.getCenter();
+
+        Coord nestCenter = this.nest.getPos();
         Coord antCenter = this.getCenter();
+
+        double threshold = this.nest.getSize() / 2.0 + this.getSize() / 2.0 + this.foodLoad.getSize() / 2.0;
         
         double distanceToNest = antCenter.distance(nestCenter);
 
         // Controlla se è abbastanza vicina al nido per consegnare il cibo
-        if (distanceToNest < nest.getSize() / 2 + this.getSize() / 2) {
+        if (distanceToNest < threshold) {
+
             // Consegna il cibo al nido
             this.dropFood();            // il cibo viene buttato
             nest.incrementFoodCount();
