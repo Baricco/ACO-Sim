@@ -104,10 +104,23 @@ public class Ant extends GameObject {
                 foodPheromonesBehaviour();
                 break;
             case ALL_PHEROMONES:
-                // TODO: Comportamento basato su tutti i feromoni
-                foodPheromonesBehaviour();
+                allPheromonesBehaviour();
                 break;
         }
+    }
+
+    private void allPheromonesBehaviour() {
+        // Gestisci prima il caso di ritorno con cibo
+        if (handlePheromoneFoodReturn()) return;
+        
+        // Se manca il density manager, usa comportamento casuale
+        if (this.densityFieldManager == null) {
+            updateDirectionRandomly();
+            return;
+        }
+        
+        // Segui il gradiente dei feromoni del cibo e del nido
+        followFoodPheromoneGradient();
     }
 
     private void foodPheromonesBehaviour() {
@@ -136,6 +149,44 @@ public class Ant extends GameObject {
         
         // Movimento casuale quando non ha cibo
         updateDirectionRandomly();
+    }
+
+    private boolean handlePheromoneFoodReturn() {
+        
+        if (!this.hasFoodLoad()) return false;
+
+        dropFoodIfOnNest();
+
+        // Se ha ancora cibo dopo il tentativo di drop, vai verso il nido
+        if (this.hasFoodLoad()) {
+            followNestPheromoneGradient();
+        }
+        
+        return true;
+    }
+
+    private void followNestPheromoneGradient() {
+        Coord pheromoneDirection = this.densityFieldManager.getPheromoneGradient(
+            this.getCenter(), Pheromone.PheromoneType.HOME_TRAIL);
+        
+        double localIntensity = this.densityFieldManager.getTotalIntensity(
+            this.getCenter(), Pheromone.PheromoneType.HOME_TRAIL);
+        
+        // Debug periodico per alcune formiche
+        if (this.serialNumber == 100) {
+            System.out.printf("Ant %d: Gradient=%.3f, LocalIntensity=%.3f, UsingPheromones=%s\n", 
+                serialNumber, pheromoneDirection.length(), localIntensity, 
+                (pheromoneDirection.length() > 0.001) ? "YES" : "NO");
+        }
+        
+        // Se i feromoni sono troppo deboli, usa movimento casuale
+        if (pheromoneDirection.length() <= 0.001) {
+            pheromoneDirection = handleRandomSteering();
+        } else {
+            pheromoneDirection.normalize();
+        }
+        
+        applyDirectionChange(pheromoneDirection);
     }
 
     private void updateDirectionRandomly() {
