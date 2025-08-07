@@ -20,10 +20,10 @@ public class Pheromone {
     // Costanti di configurazione (mantenute uguali)
     public static final int PHEROMONE_SIZE = 2;                         // Dimensione del feromone in pixel
     public static final double INITIAL_INTENSITY = 1;                // Intensità iniziale
-    public static final double EVAPORATION_RATE = 0.75;                 // 25% evaporazione al secondo
+    public static final double EVAPORATION_RATE = 0.99;                 // 1% evaporazione al secondo
     public static final double MAX_INTENSITY = 1.0;                     // Intensità massima
     public static final double MIN_INTENSITY = 0.1;                    // Intensità minima prima della rimozione
-    
+    public static final double MAX_PHEROMONE_TRAIL_DISTANCE = 1000.0;    // distanza oltre la quale intensità rimane al minimo
 
     public static Color getColorForType(PheromoneType type) {
         switch(type) {

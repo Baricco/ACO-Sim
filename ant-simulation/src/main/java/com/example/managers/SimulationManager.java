@@ -246,7 +246,7 @@ public class SimulationManager {
             type = Pheromone.PheromoneType.HOME_TRAIL;
         }
         
-        densityManager.addPheromone(ant.getCenter(), type, Pheromone.INITIAL_INTENSITY);
+        densityManager.addPheromone(ant, type);
     }
 
     private void handleFoodInteraction(List<Ant> ants) {

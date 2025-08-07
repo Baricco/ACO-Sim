@@ -49,7 +49,10 @@ public class Ant extends GameObject {
     private double lastTripTime = 0;                   // quanto tempo ci ha messo a fare un viaggio
     private double meanTripTime = 0;                   // tempo medio di viaggio
 
-    
+    // Tracking delle milestone per intensità feromoni
+    private Coord lastMilestonePosition;
+    private double lastMilestoneTime;
+
     private double startTrackTime;                 // Tempo di inizio tracking
     private int tripNumber = 0;                        // Numero di viaggi effettuati
 
@@ -73,6 +76,8 @@ public class Ant extends GameObject {
         this(mapWidth, mapHeight, nest);
         this.pos = position;
         this.startTrackTime = System.nanoTime(); // Inizializza il tempo di tracking
+        this.lastMilestonePosition = position.copy(); // Inizializza la posizione dell'ultima milestone
+        this.lastMilestoneTime = System.nanoTime(); // Inizializza il tempo dell'ultima milestone
         this.behaviour = this.nest.getBehaviour();                                      // Comportamento iniziale della formica
     }
 
@@ -278,6 +283,8 @@ public class Ant extends GameObject {
             
             this.startTrackTime = System.nanoTime();                                                    // Reset per il prossimo viaggio
 
+            this.updateMilestoneTracking(); // Aggiorna le coordinate dell'ultima milestone
+
             this.lastPheromonePosition = null; // Reset per nuovo percorso
             
         }
@@ -351,8 +358,17 @@ public class Ant extends GameObject {
 
             // Aggiorna il tempo di scoperta del cibo
             this.lastFoodDiscoveryTime = System.nanoTime() - this.startTrackTime;           // tempo impiegato per trovare il cibo  
-            this.startTrackTime = System.nanoTime();                                        // Reset per il prossimo viaggio          
+            this.startTrackTime = System.nanoTime();                                        // Reset per il prossimo viaggio  
+            
+            // Aggiorna le milestone per i feromoni
+            this.updateMilestoneTracking();
         }
+    }
+
+    private void updateMilestoneTracking() {
+        // Aggiorna le coordinate dell'ultima milestone
+        this.lastMilestonePosition = this.getCenter().copy();
+        this.lastMilestoneTime = System.nanoTime();
     }
 
     public GameObject dropFood() {
@@ -405,6 +421,14 @@ public class Ant extends GameObject {
 
     public int getTripNumber() {
         return tripNumber;
+    }
+
+    public Coord getLastMilestonePosition() {
+        return lastMilestonePosition != null ? lastMilestonePosition.copy() : null;
+    }
+
+    public double getLastMilestoneTime() {
+        return lastMilestoneTime;
     }
 
     // Getters per la visualizzazione

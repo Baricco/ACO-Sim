@@ -89,13 +89,26 @@ public class DensityFieldManager {
         Coord jitteredPosition = addJitter(ant.getCenter());
     
         // Aggiunge feromone alla griglia
-        addPheromone(jitteredPosition, type, Pheromone.INITIAL_INTENSITY);
+        addPheromone(jitteredPosition, type, calcIntensity(ant));
         
         // Aggiorna lo stato della formica
         ant.setLastPheromonePosition(jitteredPosition);
         ant.setLastPheromoneTime(getCurrentTime());
 
 
+    }
+
+    private double calcIntensity(Ant ant) {
+        
+        Coord milestonePos = ant.getLastMilestonePosition();
+
+        if (milestonePos == null) return Pheromone.INITIAL_INTENSITY; // Se non c'è milestone, usa intensità iniziale
+
+        // calcola la distanza normalizzata tra la posizione della formica e la milestone
+        double normalizedDistance = Math.min(ant.getCenter().distance(milestonePos) / Pheromone.MAX_PHEROMONE_TRAIL_DISTANCE, 1.0);
+
+        // Calcola l'intensità in base alla distanza normalizzata
+        return Math.max(Pheromone.MIN_INTENSITY, Pheromone.INITIAL_INTENSITY * (1 - normalizedDistance));
     }
     
     /**
