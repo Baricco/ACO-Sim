@@ -281,11 +281,10 @@ public class DensityFieldManager {
         
         if (!isValidCell(x, y)) return 0;
         
-            double [][] field = getDensityField(type);
+        double [][] field = getDensityField(type);
             
         return field[x][y];
     }
-    
     /**
      * Calcola gradiente per navigazione formiche
      */

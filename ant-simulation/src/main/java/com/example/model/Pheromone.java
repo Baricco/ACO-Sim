@@ -23,7 +23,7 @@ public class Pheromone {
     public static final double EVAPORATION_RATE = 0.99;                 // 1% evaporazione al secondo
     public static final double MAX_INTENSITY = 1.0;                     // Intensità massima
     public static final double MIN_INTENSITY = 0.1;                    // Intensità minima prima della rimozione
-    public static final double MAX_PHEROMONE_TRAIL_DISTANCE = 1000.0;    // distanza oltre la quale intensità rimane al minimo
+    public static final double MAX_PHEROMONE_TRAIL_DISTANCE = 700;    // distanza oltre la quale intensità rimane al minimo
 
     public static Color getColorForType(PheromoneType type) {
         switch(type) {

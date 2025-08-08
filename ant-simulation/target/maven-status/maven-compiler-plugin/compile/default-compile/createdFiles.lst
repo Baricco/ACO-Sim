@@ -1,6 +1,7 @@
 com\example\simulation\DemoSimulation.class
 com\example\model\Nest.class
 com\example\simulation\Simulation.class
+com\example\model\Ant$Sensor.class
 com\example\controllers\StartWindowController.class
 com\example\graphics\GameCanvas.class
 com\example\managers\DensityFieldManager$1.class

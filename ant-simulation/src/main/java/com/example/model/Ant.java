@@ -56,6 +56,9 @@ public class Ant extends GameObject {
     private double startTrackTime;                 // Tempo di inizio tracking
     private int tripNumber = 0;                        // Numero di viaggi effettuati
 
+    // Sensori per i feromoni
+    private Sensor leftSensor, frontSensor, rightSensor;
+
     public Ant(double mapWidth, double mapHeight, Nest nest) {
         super(GameObjType.ANT, GameObject.getNewSerialNumber(), ANT_SIZE, GameObject.generateRandomPosition(mapWidth, mapHeight, ANT_SIZE));
         this.direction = generateRandomVector();
@@ -70,6 +73,10 @@ public class Ant extends GameObject {
         // INIZIALIZZA tracking temporale
         this.lastPheromonePosition = null;
         
+        // Inizializza i sensori
+        this.leftSensor = new Sensor(Math.PI / 6);   // 30 gradi a sinistra
+        this.frontSensor = new Sensor(0);             // Direzione frontale
+        this.rightSensor = new Sensor(-Math.PI / 6);  // 30 gradi a destra
     }
 
     public Ant(Coord position, double mapWidth, double mapHeight, Nest nest) {
@@ -171,8 +178,11 @@ public class Ant extends GameObject {
     }
 
     private void followNestPheromoneGradient() {
-        Coord pheromoneDirection = this.densityFieldManager.getPheromoneGradient(
-            this.getCenter(), Pheromone.PheromoneType.HOME_TRAIL);
+        
+        Coord pheromoneDirection = getPheromoneDirectionSensed(Pheromone.PheromoneType.HOME_TRAIL);
+
+        // Vecchio codice con il gradiente
+        //Coord pheromoneDirection = this.densityFieldManager.getPheromoneGradient(this.getCenter(), Pheromone.PheromoneType.HOME_TRAIL);
         
         double localIntensity = this.densityFieldManager.getTotalIntensity(
             this.getCenter(), Pheromone.PheromoneType.HOME_TRAIL);
@@ -211,8 +221,11 @@ public class Ant extends GameObject {
     }
 
     private void followFoodPheromoneGradient() {
-        Coord pheromoneDirection = this.densityFieldManager.getPheromoneGradient(
-            this.getCenter(), Pheromone.PheromoneType.FOOD_TRAIL);
+
+        Coord pheromoneDirection = getPheromoneDirectionSensed(Pheromone.PheromoneType.FOOD_TRAIL);
+
+        // Vecchio codice con il gradiente
+        //Coord pheromoneDirection = this.densityFieldManager.getPheromoneGradient(this.getCenter(), Pheromone.PheromoneType.FOOD_TRAIL);
         
         double localIntensity = this.densityFieldManager.getTotalIntensity(
             this.getCenter(), Pheromone.PheromoneType.FOOD_TRAIL);
@@ -285,6 +298,8 @@ public class Ant extends GameObject {
 
             this.updateMilestoneTracking(); // Aggiorna le coordinate dell'ultima milestone
 
+            this.turnAround();
+
             this.lastPheromonePosition = null; // Reset per nuovo percorso
             
         }
@@ -342,6 +357,19 @@ public class Ant extends GameObject {
         }
     }
 
+    private void turnAround() {
+        // Calcola l'angolo di base (180 gradi) per invertire la direzione
+        double baseAngle = Math.PI;
+        
+        // Aggiungi un offset di 60 gradi
+        double randomOffset = (RANDOM.nextDouble() - 0.5) * (Math.PI / 3);
+        
+        double newAngle = Math.atan2(direction.y, direction.x) + baseAngle + randomOffset;
+        
+        // Applica nuova direzione
+        this.direction = new Coord(Math.cos(newAngle), Math.sin(newAngle));
+    }
+
     // Metodi per il cibo
     public boolean hasFoodLoad() {
         return (this.foodLoad != null && this.foodLoad.isType(GameObjType.FOOD));
@@ -362,7 +390,37 @@ public class Ant extends GameObject {
             
             // Aggiorna le milestone per i feromoni
             this.updateMilestoneTracking();
+
+            this.turnAround();
         }
+    }
+
+    private Coord getPheromoneDirectionSensed(Pheromone.PheromoneType pheromoneType) {
+        
+        if (this.densityFieldManager == null) return handleRandomSteering();
+
+        double leftIntensity = this.leftSensor.getPheromoneSensorValue(pheromoneType);
+        double frontIntensity = this.frontSensor.getPheromoneSensorValue(pheromoneType);
+        double rightIntensity = this.rightSensor.getPheromoneSensorValue(pheromoneType);
+
+        double maxIntensity = Math.max(leftIntensity, Math.max(frontIntensity, rightIntensity));
+
+        if (maxIntensity <= Pheromone.MIN_INTENSITY) {
+            // Se tutte le intensità sono molto basse, usa un vettore casuale
+            return handleRandomSteering();
+        }
+
+        if (frontIntensity >= leftIntensity && frontIntensity >= rightIntensity) {
+            // Il sensore frontale ha il valore più alto
+            return this.frontSensor.getPointingDirection();
+        } else if (leftIntensity > rightIntensity) {
+            // Il sensore sinistro ha il valore più alto
+            return this.leftSensor.getPointingDirection();  
+        } else {
+            // Il sensore destro ha il valore più alto
+            return this.rightSensor.getPointingDirection();
+        }
+
     }
 
     private void updateMilestoneTracking() {
@@ -450,4 +508,39 @@ public class Ant extends GameObject {
     public void setSize(double newSize) {
         this.size = newSize;
     }
+
+    private class Sensor {
+        private double angleOffset;  // Offset rispetto alla direzione della formica
+
+        public Sensor(double angleOffset) {
+            this.angleOffset = angleOffset;
+        }
+
+        public double getPheromoneSensorValue(Pheromone.PheromoneType type) {
+            if (densityFieldManager == null) return 0.0;
+            
+            // Calcola posizione del sensore relativa alla direzione corrente
+            double antAngle = Math.atan2(direction.y, direction.x);
+            double sensorAngle = antAngle + angleOffset;
+            
+            Coord sensorPosition = new Coord(
+                getCenter().x + ANT_FEEL_RADIUS * Math.cos(sensorAngle),
+                getCenter().y + ANT_FEEL_RADIUS * Math.sin(sensorAngle)
+            );
+            
+            return densityFieldManager.getTotalIntensity(sensorPosition, type);
+        }
+
+        public Coord getPointingDirection() {
+            // Ritorna la DIREZIONE verso cui punta il sensore, non la posizione
+            double antAngle = Math.atan2(direction.y, direction.x);
+            double sensorAngle = antAngle + angleOffset;
+            
+            return new Coord(
+                Math.cos(sensorAngle),
+                Math.sin(sensorAngle)
+            );
+        }
+    }
+
 }
