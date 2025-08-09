@@ -32,6 +32,13 @@ public class MultiHashGrid {
         for (Food food : foods) addFood(food);
     }
 
+    public Coord getNearestFoodDirection(Coord pos, double maxDistance) {
+        return foodGrid.getNearestGameObjectDirection(pos, maxDistance + Food.FOOD_DIM);
+    }
+
+    public Coord getNearestAntDirection(Coord pos, double maxDistance) {
+        return antGrid.getNearestGameObjectDirection(pos, maxDistance + Ant.ANT_SIZE);
+    }
 
     public void clear() {
         antGrid.clear();

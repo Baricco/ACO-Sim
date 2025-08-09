@@ -5,6 +5,7 @@ import java.util.Random;
 import com.example.graphics.Coord;
 import com.example.graphics.GameCanvas;
 import com.example.managers.DensityFieldManager;
+import com.example.managers.MultiHashGrid;
 
 import javafx.scene.paint.Color;
 
@@ -18,14 +19,14 @@ public class Ant extends GameObject {
 
     // Costanti
     public static final int ANT_SIZE = 20;
-    public static final int ANT_FEEL_RADIUS = 50;               // Raggio di percezione per i feromoni
+    public static final int ANT_FEEL_RADIUS = 70;               // Raggio di percezione per i feromoni e di visione
     public static final Color ANT_FEEL_COLOR = Color.rgb(255, 255, 0, 0.2); // Colore per il raggio di percezione
     public static final Color ANT_COLOR = Color.RED;
-    public static final double ANT_SPEED = 120.0; // pixel/secondo
+    public static final double ANT_SPEED = 150.0; // pixel/secondo
     public static final int WINDOW_BOUND_MARGIN = 2;
 
     private static final Random RANDOM = new Random();
-    private static final double SMOOTH_MOVEMENT_FACTOR = 0.1;
+    private static final double SMOOTH_MOVEMENT_FACTOR = 0.2;
 
     // Stato della formica
     protected Coord direction;
@@ -38,6 +39,7 @@ public class Ant extends GameObject {
     // Comportamento della formica
     protected ANT_BEHAVIOUR behaviour;
     protected DensityFieldManager densityFieldManager;          // Gestore del campo di densità per i feromoni
+    protected MultiHashGrid multiHashGrid;                      // Gestiore dei gameObject
     
     // Tracking temporale per feromoni
     private Coord lastPheromonePosition;
@@ -179,6 +181,12 @@ public class Ant extends GameObject {
 
     private void followNestPheromoneGradient() {
         
+        // Se il Nest è nel raggio di visione della formica, vai diretto al Nest
+        if (nest.getPos().distance(this.getCenter()) <= ANT_FEEL_RADIUS + this.nest.getSize()) {
+            setDirection(calcDirectionToNest());
+            return;
+        }
+
         Coord pheromoneDirection = getPheromoneDirectionSensed(Pheromone.PheromoneType.HOME_TRAIL);
 
         // Vecchio codice con il gradiente
@@ -209,6 +217,17 @@ public class Ant extends GameObject {
         applyDirectionChange(randomDirection);
     }
 
+    private void setDirection(Coord newDirection) {
+        if (newDirection == null || newDirection.length() <= 0) return;
+
+        newDirection.multiply(SMOOTH_MOVEMENT_FACTOR);
+
+        this.direction = newDirection.copy();
+
+        this.direction.normalize();
+
+    }
+
     private void applyDirectionChange(Coord newDirection) {
 
         if (newDirection == null || newDirection.length() <= 0) return;
@@ -222,6 +241,13 @@ public class Ant extends GameObject {
 
     private void followFoodPheromoneGradient() {
 
+        // Se il cibo è nel raggio di visione della formica, vai diretto al cibo
+        Coord foodDirection = this.multiHashGrid.getNearestFoodDirection(pos, ANT_FEEL_RADIUS);
+        if (foodDirection != null) {
+            setDirection(foodDirection);
+            return;
+        }
+        
         Coord pheromoneDirection = getPheromoneDirectionSensed(Pheromone.PheromoneType.FOOD_TRAIL);
 
         // Vecchio codice con il gradiente
@@ -263,7 +289,7 @@ public class Ant extends GameObject {
         
         // Se ha ancora cibo dopo il tentativo di drop, vai verso il nido
         if (this.hasFoodLoad()) {
-            this.direction = calcDirectionToNest();
+            applyDirectionChange(calcDirectionToNest());
         }
         
         return true; // Indica che la formica aveva cibo e il comportamento è stato gestito
@@ -435,9 +461,13 @@ public class Ant extends GameObject {
         return droppedFood;
     }
 
-    
+    public void attachMultiHashGrid(MultiHashGrid multiHashGrid) {
+        if (this.multiHashGrid != null || multiHashGrid == null) return;
+        this.multiHashGrid = multiHashGrid;
+    }
+
     public void attachDensityManager(DensityFieldManager densityFieldManager) {
-        if (densityFieldManager == null || this.densityFieldManager != null) return;
+        if (this.densityFieldManager != null || densityFieldManager == null) return;
         this.densityFieldManager = densityFieldManager;
     }
 

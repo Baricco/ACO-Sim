@@ -180,6 +180,8 @@ public class SimulationManager {
         // Aggiorna formiche
         for (Ant ant : ants) {
 
+            ant.attachMultiHashGrid(gameObjectGrid);
+
             if (ant.equals(currentSimulation.getSelectedAnt())) {
                 ant.setSize(Ant.ANT_SIZE * SELECTED_ANT_SIZE_MULTIPLIER); // Aumenta la dimensione della formica selezionata
             } else {

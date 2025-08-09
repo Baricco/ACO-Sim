@@ -270,8 +270,6 @@ public class DensityFieldManager {
     }
 
 
-
-
     /**
      * Ottieni intensità totale in una posizione - per navigazione formiche
      */
