@@ -19,11 +19,13 @@ public class Ant extends GameObject {
 
     // Costanti
     public static final int ANT_SIZE = 20;
-    public static final int ANT_FEEL_RADIUS = 70;               // Raggio di percezione per i feromoni e di visione
+    public static final int ANT_FEEL_RADIUS = 50;                       // Raggio di percezione per i feromoni e di visione
+    public static final double ANT_SENSOR_ANGLE = Math.PI / 6;          // 30 gradi
+    public static final double TURN_AROUND_ANGLE_OFFSET = Math.PI / 6;  // 30 gradi
     public static final Color ANT_FEEL_COLOR = Color.rgb(255, 255, 0, 0.2); // Colore per il raggio di percezione
     public static final Color ANT_COLOR = Color.RED;
     public static final double ANT_SPEED = 150.0; // pixel/secondo
-    public static final int WINDOW_BOUND_MARGIN = 2;
+    public static final int WINDOW_BOUND_MARGIN = -ANT_SIZE/2; // Margine per il rimbalzo sui bordi della finestra
 
     private static final Random RANDOM = new Random();
     private static final double SMOOTH_MOVEMENT_FACTOR = 0.2;
@@ -76,9 +78,9 @@ public class Ant extends GameObject {
         this.lastPheromonePosition = null;
         
         // Inizializza i sensori
-        this.leftSensor = new Sensor(Math.PI / 6);   // 30 gradi a sinistra
+        this.leftSensor = new Sensor(Ant.ANT_SENSOR_ANGLE);   // 30 gradi a sinistra
         this.frontSensor = new Sensor(0);             // Direzione frontale
-        this.rightSensor = new Sensor(-Math.PI / 6);  // 30 gradi a destra
+        this.rightSensor = new Sensor(-Ant.ANT_SENSOR_ANGLE);  // 30 gradi a destra
     }
 
     public Ant(Coord position, double mapWidth, double mapHeight, Nest nest) {
@@ -368,13 +370,13 @@ public class Ant extends GameObject {
         // Rimbalza sui bordi
         if (
             (center.x - this.getSize() / 2 - this.getFoodLoad().getSize() / 2 < WINDOW_BOUND_MARGIN && this.direction.x < 0) || 
-            (center.x + this.getSize() / 2 + this.getFoodLoad().getSize() / 2 > mapWidth - WINDOW_BOUND_MARGIN && this.direction.x > 0) ) {
-            this.direction.x *= -1;
+            (center.x + this.getSize() / 2 + this.getFoodLoad().getSize() / 2 > mapWidth - WINDOW_BOUND_MARGIN && this.direction.x > 0) ||
+            (center.y - this.getSize() / 2 - this.getFoodLoad().getSize() / 2 < WINDOW_BOUND_MARGIN && this.direction.y < 0) ||
+            (center.y + this.getSize() / 2 + this.getFoodLoad().getSize() / 2 > mapHeight - WINDOW_BOUND_MARGIN && this.direction.y > 0)
+            ) {
+            this.turnAround();
         }
-        if ((center.y - this.getSize() / 2 - this.getFoodLoad().getSize() / 2 < WINDOW_BOUND_MARGIN && this.direction.y < 0) ||
-            (center.y + this.getSize() / 2 + this.getFoodLoad().getSize() / 2 > mapHeight - WINDOW_BOUND_MARGIN && this.direction.y > 0)) {
-            this.direction.y *= -1;
-        }
+
     }
 
     private void updateAngle() {
@@ -386,10 +388,10 @@ public class Ant extends GameObject {
     private void turnAround() {
         // Calcola l'angolo di base (180 gradi) per invertire la direzione
         double baseAngle = Math.PI;
-        
-        // Aggiungi un offset di 60 gradi
-        double randomOffset = (RANDOM.nextDouble() - 0.5) * (Math.PI / 3);
-        
+
+        // Aggiungi un offset di 30 gradi
+        double randomOffset = (RANDOM.nextDouble() - 0.5) * Ant.TURN_AROUND_ANGLE_OFFSET;
+
         double newAngle = Math.atan2(direction.y, direction.x) + baseAngle + randomOffset;
         
         // Applica nuova direzione

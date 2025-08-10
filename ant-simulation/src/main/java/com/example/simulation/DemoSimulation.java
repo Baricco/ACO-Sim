@@ -9,7 +9,7 @@ public class DemoSimulation extends Simulation {
 
     private static final int NESTS_NUMBER = 1;
     private static final int ANTS_NUMBER = 10;
-    private static final int FOODS_NUMBER = 50;
+    private static final int FOODS_NUMBER = 80;
 
     public DemoSimulation(double mapWidth, double mapHeight) {
         super(NESTS_NUMBER, ANTS_NUMBER, FOODS_NUMBER, mapWidth, mapHeight);

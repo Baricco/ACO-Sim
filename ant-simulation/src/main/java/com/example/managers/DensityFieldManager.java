@@ -89,7 +89,7 @@ public class DensityFieldManager {
         Coord jitteredPosition = addJitter(ant.getCenter());
     
         // Aggiunge feromone alla griglia
-        addPheromone(jitteredPosition, type, calcIntensity(ant));
+        addPheromone(jitteredPosition, type, calcPheromoneIntensity(ant));
         
         // Aggiorna lo stato della formica
         ant.setLastPheromonePosition(jitteredPosition);
@@ -98,8 +98,28 @@ public class DensityFieldManager {
 
     }
 
-    private double calcIntensity(Ant ant) {
-        
+    private double calcPheromoneIntensity(Ant ant) {
+
+        // Sistema che usa il tempo
+
+        double lastMilestoneTime = ant.getStartTrackTime();
+
+        if (lastMilestoneTime <= 0) return Pheromone.INITIAL_INTENSITY; // Se non c'è milestone, usa intensità iniziale QUESTA RIGA VA CAMBIATA
+
+        double timeSinceLastMilestone = getCurrentTime() - lastMilestoneTime;
+
+        timeSinceLastMilestone /= 1_000_000.0; // Converti nanosecondi in millisecondi
+
+        double normalizedTime = Math.min(timeSinceLastMilestone / Pheromone.MAX_PHEROMONE_TRAIL_DURATION, 1.0);
+
+        System.out.printf("Ant %d pheromone intensity: %.2f (time: %.2f)\n", ant.getSerialNumber(), Pheromone.INITIAL_INTENSITY * (1 - normalizedTime), timeSinceLastMilestone);
+
+        return Math.max(Pheromone.MIN_INTENSITY, Pheromone.INITIAL_INTENSITY * (1 - normalizedTime));
+
+        /*
+
+        // Sistema che usa la distanza (distanza dalla milestone, non distanza percorsa, infatti era sbagliato)
+
         Coord milestonePos = ant.getLastMilestonePosition();
 
         if (milestonePos == null) return Pheromone.INITIAL_INTENSITY; // Se non c'è milestone, usa intensità iniziale
@@ -109,6 +129,7 @@ public class DensityFieldManager {
 
         // Calcola l'intensità in base alla distanza normalizzata
         return Math.max(Pheromone.MIN_INTENSITY, Pheromone.INITIAL_INTENSITY * (1 - normalizedDistance));
+        */
     }
     
     /**
@@ -146,7 +167,7 @@ public class DensityFieldManager {
     }
     
     private double getCurrentTime() {
-        return System.currentTimeMillis() / 1000.0;
+        return System.nanoTime();
     }
     
     public double[][] getDensityField(Pheromone.PheromoneType type) {
