@@ -5,7 +5,7 @@ import com.example.model.Ant;
 public class FullSimulation extends Simulation {
     
     private static final int NEST_NUMBER = 1;
-    private static final int ANT_NUMBER = 250;
+    private static final int ANT_NUMBER = 300;
     private static final int CLUMP_SIZE = 500;                       // Numero di pezzi di cibo in un ammasso
     private static final int CLUMP_NUMBER = 10;                      // Numero di ammassi di cibo        
 

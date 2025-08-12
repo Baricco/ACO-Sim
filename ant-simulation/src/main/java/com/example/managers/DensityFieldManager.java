@@ -72,7 +72,7 @@ public class DensityFieldManager {
 
         switch(type) {
             case FOOD_TRAIL:
-                totalFoodIntensity += intensity;
+                totalFoodIntensity += intensity * 1.5;
                 break;
             case HOME_TRAIL:
                 totalHomeIntensity += intensity;
