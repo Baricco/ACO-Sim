@@ -14,12 +14,12 @@ public class Pheromone {
     }
 
     // Colori dei feromoni (mantenuti uguali)
-    public static final Color FOOD_TRAIL_COLOR = Color.color(0.6, 0.5, 0.2);    // Arancione
+    public static final Color FOOD_TRAIL_COLOR = Color.color(0.8, 0.3, 0.2);    // Arancione
     public static final Color HOME_TRAIL_COLOR = Color.color(0.2, 0.4, 1.0);    // Blu
     
     // Costanti di configurazione (mantenute uguali)
     public static final int PHEROMONE_SIZE = 2;                         // Dimensione del feromone in pixel
-    public static final double EVAPORATION_RATE = 0.80;                 // 20% evaporazione al secondo
+    public static final double EVAPORATION_RATE = 0.9;                 // 20% evaporazione al secondo
     public static final double MAX_INTENSITY = 3;                     // Intensità massima
     public static final double MIN_INTENSITY = 0.05;                    // Intensità minima prima della rimozione
     public static final double INITIAL_INTENSITY = 0.8;                // Intensità iniziale
@@ -39,7 +39,7 @@ public class Pheromone {
     
     public static Color getColorWithAlpha(PheromoneType type, double intensity) {
         Color baseColor = getColorForType(type);
-        double alpha = Math.max(0.8, intensity / MAX_INTENSITY);
+        double alpha = Math.max(0.1, intensity);
 
         //System.out.println(alpha);
 

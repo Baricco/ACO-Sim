@@ -13,7 +13,7 @@ public class PheromoneRenderer {
 
     private static final double RANDOM_OFFSET = 0.75;           // Per jitter casuale
     private static final double SAMPLING_FACTOR = 0.5;          // Riduce il numero di punti renderizzati
-    private static final double ALPHA_FACTOR = 1;            // Fattore di opacità per i feromoni
+    private static final double ALPHA_FACTOR = 0.50;            // Fattore di opacità per i feromoni
 
     private boolean renderingEnabled = true;
     
@@ -62,10 +62,13 @@ public class PheromoneRenderer {
     }
     
     private void renderDot(GameCanvas canvas, double x, double y, double intensity, Pheromone.PheromoneType type) {
-        // Raggio basato su intensità
-        double radius = Pheromone.PHEROMONE_SIZE * (intensity / Pheromone.MAX_INTENSITY);
 
-        Color color = Pheromone.getColorWithAlpha(type, intensity * ALPHA_FACTOR);
+        double intensityFactor = (intensity / Pheromone.MAX_INTENSITY);
+
+        // Raggio basato su intensità
+        double radius = Pheromone.PHEROMONE_SIZE * intensityFactor;
+
+        Color color = Pheromone.getColorWithAlpha(type, intensityFactor * ALPHA_FACTOR);
 
         //System.out.println(intensity*ALPHA_FACTOR);
 

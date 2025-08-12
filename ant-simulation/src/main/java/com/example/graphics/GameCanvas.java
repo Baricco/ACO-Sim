@@ -101,9 +101,9 @@ public class GameCanvas extends Canvas {
             renderAnt(ant, loadImageCached("selectedAntSprite.png"));
             // Disegna il raggio di percezione della formica
             gc.setFill(Ant.ANT_FEEL_COLOR);
-            gc.fillOval(ant.getCenter().x - Ant.ANT_FEEL_RADIUS, ant.getCenter().y - Ant.ANT_FEEL_RADIUS, 
-                        Ant.ANT_FEEL_RADIUS * 2, Ant.ANT_FEEL_RADIUS * 2);
-        
+            gc.fillOval(ant.getCenter().x - Ant.ANT_SIGHT_RADIUS, ant.getCenter().y - Ant.ANT_SIGHT_RADIUS, 
+                        Ant.ANT_SIGHT_RADIUS * 2, Ant.ANT_SIGHT_RADIUS * 2);
+
         }
         else renderAnt(ant);
         
@@ -127,7 +127,6 @@ public class GameCanvas extends Canvas {
         // Trasla al centro della formica per la rotazione
         gc.translate(pos.x + size/2, pos.y + size/2);
         gc.rotate(Math.toDegrees(ant.getAngle()));
-        
 
         // Se la formica ha uno sprite, disegnalo
         if (ant.hasSprite()) {
@@ -145,28 +144,30 @@ public class GameCanvas extends Canvas {
             gc.strokeLine(0, 0, size/2, 0);
         
         }
+            
+        // Se ha del cibo, disegnalo
+        if (ant.hasFoodLoad()) {
+            Food food = (Food)ant.getFoodLoad();
+            double offsetDistance = size * 0.6; // distanza dal centro
+            
+            // Renderizza il cibo nelle coordinate trasformate
+            if (food.hasSprite()) {
+                gc.drawImage(food.getSprite(), 
+                    offsetDistance - food.getSize()/2, 
+                    -food.getSize()/2, 
+                    food.getSize(), 
+                    food.getSize());
+            } else {
+                gc.setFill(food.getColor());
+                gc.fillOval(offsetDistance - food.getSize()/2, 
+                           -food.getSize()/2, 
+                           food.getSize(), 
+                           food.getSize());
+            }
+        }
 
         // Ripristina lo stato
         gc.restore();
-        
-        // Se ha del cibo, disegnalo
-        if (ant.hasFoodLoad()) {
-
-            Food food = (Food)ant.getFoodLoad();
-            
-            double antAngle = ant.getAngle();
-
-            final double magic_constant = -1;
-
-            Coord foodPosition = new Coord(
-                pos.x + size * Math.cos(antAngle) + magic_constant,
-                pos.y + size * Math.sin(antAngle) + magic_constant
-            );
-        
-            food.setPos(foodPosition);
-
-            renderFoodItem(food);
-        }
     }
     
     /**

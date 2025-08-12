@@ -25,9 +25,10 @@ public class DensityFieldManager {
     // Costanti per limitare il piazzamento dei feromoni
     private static final double MIN_DISTANCE_BETWEEN_PHEROMONES = Pheromone.PHEROMONE_SIZE; // Distanza minima tra i feromoni
     private static final double JITTER_RADIUS = MIN_DISTANCE_BETWEEN_PHEROMONES * 0.15;
-    private static final double MIN_TIME_BETWEEN_PHEROMONES = 0.025; // secondi
-    
-    private static final double DIFFUSION_RATE = 0.5;              // Fattore di diffusione per il campo
+    private static final double MIN_TIME_BETWEEN_PHEROMONES = MIN_DISTANCE_BETWEEN_PHEROMONES / Ant.ANT_SPEED; // secondi
+    private static final double FOOD_PHEROMONES_BOOSTER = 1.75;
+
+    private static final double DIFFUSION_RATE = 0.25;              // Fattore di diffusione per il campo
     private static final double[][] GAUSSIAN_KERNEL = {             // Kernel gaussiano 3x3 pre-calcolato
         {0.077847, 0.123317, 0.077847},
         {0.123317, 0.195346, 0.123317}, 
@@ -63,7 +64,9 @@ public class DensityFieldManager {
 
         int x = (int) (pos.x / CELL_SIZE);
         int y = (int) (pos.y / CELL_SIZE);
-        
+
+        if (type == Pheromone.PheromoneType.FOOD_TRAIL) intensity *= FOOD_PHEROMONES_BOOSTER;
+
         if (isValidCell(x, y)) {
             double [][] targetField = getDensityField(type);
                 
@@ -72,7 +75,7 @@ public class DensityFieldManager {
 
         switch(type) {
             case FOOD_TRAIL:
-                totalFoodIntensity += intensity * 1.5;
+                totalFoodIntensity += intensity;
                 break;
             case HOME_TRAIL:
                 totalHomeIntensity += intensity;
@@ -289,6 +292,32 @@ public class DensityFieldManager {
     }
 
 
+
+    /*
+     * 
+     * 
+     * 
+     *     public double getTotalIntensity(Coord position, Pheromone.PheromoneType type, double radius) {
+        
+        int x = (int) (position.x / CELL_SIZE);
+        int y = (int) (position.y / CELL_SIZE);
+        
+        if (!isValidCell(x, y)) return 0;
+        
+        double [][] field = getDensityField(type);
+
+        double totalIntensity = 0;
+        for (double dx = -radius; dx <= radius; dx++) {
+            for (double dy = -radius; dy <= radius; dy++) {
+                if (Math.abs(dx) + Math.abs(dy) <= radius) {
+                    totalIntensity += getFieldValue(field, x + (int)Math.round(dx), y + (int)Math.round(dy));
+                }
+            }
+        }
+        return totalIntensity;
+    }
+     */
+
     /**
      * Ottieni intensità totale in una posizione - per navigazione formiche
      */
@@ -327,7 +356,7 @@ public class DensityFieldManager {
 
         return gradient;
     }
-    
+
     /**
      * Ottieni valore sicuro dal campo (0 se fuori bounds)
      */

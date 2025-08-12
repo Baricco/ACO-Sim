@@ -3,13 +3,12 @@ package com.example.model;
 import java.util.Random;
 
 import com.example.graphics.Coord;
-import com.example.graphics.GameCanvas;
 
 import javafx.scene.paint.Color;
 
 public class Food extends GameObject {
     
-    public static final int FOOD_DIM = 20;                 // Dimensione del cibo
+    public static final int FOOD_DIM = 5;                 // Dimensione del cibo (20 :)
     private static final Color FOOD_COLOR = Color.GREEN;    // Colore del cibo
 
     private static Random RANDOM = new Random();
@@ -21,12 +20,12 @@ public class Food extends GameObject {
         GameObject.getNewSerialNumber(), 
         FOOD_DIM
     );
-        this.setSprite(GameCanvas.loadImageCached("foodSprite.png"));
+        //this.setSprite(GameCanvas.loadImageCached("foodSprite.png"));
     }
 
     public Food(Coord pos) {
         super(pos, GameObjType.FOOD, GameObject.getNewSerialNumber(), FOOD_DIM);
-        this.setSprite(GameCanvas.loadImageCached("foodSprite.png"));
+        //this.setSprite(GameCanvas.loadImageCached("foodSprite.png"));
 
     }
 

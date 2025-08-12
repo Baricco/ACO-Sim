@@ -13,8 +13,8 @@ public class FoodClump extends GameObject {
     private List<Food> foodPieces;
     private final Simulation simulationParent;
     private static final int CLUMP_SIZE = 100;  // Dimensione dell'ammasso di cibo in pixel
-    private static final int MAX_ATTEMPTS = 50; // Numero massimo di tentativi per trovare una posizione valida
-    private static final int MIN_DISTANCE = 100; // Distanza minima tra i clump
+    private static final int MAX_ATTEMPTS = 500; // Numero massimo di tentativi per trovare una posizione valida
+    private static final int MIN_DISTANCE = 200; // Distanza minima tra i clump
     private static final Random RANDOM = new Random();
     private boolean hasSpawned = false;
 
@@ -27,8 +27,7 @@ public class FoodClump extends GameObject {
     }
 
     public FoodClump(int foodNumber, double mapWidth, double mapHeight, Simulation simulationParent) {
-        super(GameObjType.FOOD_CLUMP, GameObject.getNewSerialNumber(), CLUMP_SIZE, 
-            findValidPosition(mapWidth, mapHeight, simulationParent));
+        super(findValidPosition(mapWidth, mapHeight, simulationParent), GameObjType.FOOD_CLUMP, GameObject.getNewSerialNumber(), CLUMP_SIZE);
         this.initialFoodCount = foodNumber;
         this.foodPieces = new ArrayList<>();
         this.simulationParent = simulationParent;
@@ -36,9 +35,11 @@ public class FoodClump extends GameObject {
     }
 
     private static Coord findValidPosition(double mapWidth, double mapHeight, Simulation parent) {
-        
+
+        double minHeight = 300;
+
         for (int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-            Coord candidate = GameObject.generateRandomPosition(mapWidth, mapHeight, CLUMP_SIZE);
+            Coord candidate = GameObject.generateRandomPosition(mapWidth, mapHeight - minHeight, CLUMP_SIZE);
             
             boolean validPosition = true;
             for (FoodClump existing : parent.getOriginalFoodClumps()) {
@@ -50,8 +51,8 @@ public class FoodClump extends GameObject {
             
             if (validPosition) return candidate;
         }
-        
-        return GameObject.generateRandomPosition(mapWidth, mapHeight, CLUMP_SIZE);  // Fallback: posizione casuale
+
+        return GameObject.generateRandomPosition(mapWidth, mapHeight - minHeight, CLUMP_SIZE);  // Fallback: posizione casuale
     }
 
     public void spawnFood() {
