@@ -67,6 +67,8 @@ public class PheromoneRenderer {
 
         Color color = Pheromone.getColorWithAlpha(type, intensity * ALPHA_FACTOR);
 
+        //System.out.println(intensity*ALPHA_FACTOR);
+
         canvas.renderCircle(x + RANDOM.nextGaussian() * RANDOM_OFFSET, y + RANDOM.nextGaussian() * RANDOM_OFFSET, radius, color);
     }
     

@@ -19,10 +19,10 @@ public class Pheromone {
     
     // Costanti di configurazione (mantenute uguali)
     public static final int PHEROMONE_SIZE = 2;                         // Dimensione del feromone in pixel
-    public static final double INITIAL_INTENSITY = 1;                // Intensità iniziale
-    public static final double EVAPORATION_RATE = 0.75;                 // 25% evaporazione al secondo
+    public static final double EVAPORATION_RATE = 0.80;                 // 20% evaporazione al secondo
     public static final double MAX_INTENSITY = 1.0;                     // Intensità massima
-    public static final double MIN_INTENSITY = 0.1;                    // Intensità minima prima della rimozione
+    public static final double MIN_INTENSITY = 0.05;                    // Intensità minima prima della rimozione
+    public static final double INITIAL_INTENSITY = 0.4;                // Intensità iniziale
     public static final double MAX_PHEROMONE_TRAIL_LENGTH = 1000;       // Lunghezza massima di rilascio di feromoni in pixel  
     public static final double MAX_PHEROMONE_TRAIL_DURATION = MAX_PHEROMONE_TRAIL_LENGTH / Ant.ANT_SPEED;  // Durata massima di rilascio di feromoni in secondi
 
@@ -39,7 +39,9 @@ public class Pheromone {
     
     public static Color getColorWithAlpha(PheromoneType type, double intensity) {
         Color baseColor = getColorForType(type);
-        double alpha = Math.min(0.8, intensity / MAX_INTENSITY);
+        double alpha = Math.max(0.8, intensity / MAX_INTENSITY);
+
+        //System.out.println(alpha);
 
         return new Color(
             baseColor.getRed(),

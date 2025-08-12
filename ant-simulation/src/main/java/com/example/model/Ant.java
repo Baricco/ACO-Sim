@@ -20,13 +20,14 @@ public class Ant extends GameObject {
     // Costanti
     public static final int ANT_SIZE = 20;
     public static final int ANT_FEEL_RADIUS = 50;                       // Raggio di percezione per i feromoni e di visione
-    public static final double ANT_SENSOR_ANGLE = Math.PI / 6;          // 30 gradi
-    public static final double TURN_AROUND_ANGLE_OFFSET = Math.PI / 6;  // 30 gradi
+    public static final double ANT_SENSOR_ANGLE = Math.PI / 4;          // 45 gradi
+    public static final double TURN_AROUND_ANGLE_OFFSET = Math.PI / 4;  // 45 gradi
     public static final Color ANT_FEEL_COLOR = Color.rgb(255, 255, 0, 0.2); // Colore per il raggio di percezione
     public static final Color ANT_COLOR = Color.RED;
     public static final double ANT_SPEED = 250.0; // pixel/secondo
     public static final int WINDOW_BOUND_MARGIN = -ANT_SIZE/2; // Margine per il rimbalzo sui bordi della finestra
     public static final int MAX_FOOD_SEARCH_TIME = 10000;       // tempo massimo di ricerca del cibo in millisecondi
+    public static final double EXPLORATION_RATE = 0.25;         // Probabilità di esplorare nuovi percorsi, piuttosto che seguire quelli esistenti
 
     private static final Random RANDOM = new Random();
     private static final double SMOOTH_MOVEMENT_FACTOR = 0.2;
@@ -456,17 +457,42 @@ public class Ant extends GameObject {
             return handleRandomSteering();
         }
 
-        if (frontIntensity >= leftIntensity && frontIntensity >= rightIntensity) {
+        return selectDirection(leftIntensity, frontIntensity, rightIntensity);
+
+    }
+
+    private Coord selectDirection(double leftIntensity, double frontIntensity, double rightIntensity) {
+
+        double totalIntensity = leftIntensity + frontIntensity + rightIntensity;
+
+
+        // Calcola la probabilità per ogni direzione come intensità relativa + tasso di esplorazione
+        double leftProbability = leftIntensity / totalIntensity + EXPLORATION_RATE / 3;
+        double frontProbability = frontIntensity / totalIntensity + EXPLORATION_RATE / 3;
+        double rightProbability = rightIntensity / totalIntensity + EXPLORATION_RATE / 3;
+
+
+        // normalizzazione delle probabilità
+
+        totalIntensity = leftProbability + frontProbability + rightProbability;
+
+        leftProbability /= totalIntensity;
+        frontProbability /= totalIntensity;
+        //rightProbability /= totalIntensity;
+
+        // numero random per selezione probabilistica
+        double rand = RANDOM.nextDouble();
+
+        if (rand < frontProbability) {
             // Il sensore frontale ha il valore più alto
             return this.frontSensor.getPointingDirection();
-        } else if (leftIntensity > rightIntensity) {
+        } else if (rand < leftProbability + frontProbability) {
             // Il sensore sinistro ha il valore più alto
             return this.leftSensor.getPointingDirection();  
         } else {
             // Il sensore destro ha il valore più alto
             return this.rightSensor.getPointingDirection();
         }
-
     }
 
     private void updateMilestoneTracking() {
