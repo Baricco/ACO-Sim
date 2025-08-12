@@ -24,8 +24,9 @@ public class Ant extends GameObject {
     public static final double TURN_AROUND_ANGLE_OFFSET = Math.PI / 6;  // 30 gradi
     public static final Color ANT_FEEL_COLOR = Color.rgb(255, 255, 0, 0.2); // Colore per il raggio di percezione
     public static final Color ANT_COLOR = Color.RED;
-    public static final double ANT_SPEED = 150.0; // pixel/secondo
+    public static final double ANT_SPEED = 250.0; // pixel/secondo
     public static final int WINDOW_BOUND_MARGIN = -ANT_SIZE/2; // Margine per il rimbalzo sui bordi della finestra
+    public static final int MAX_FOOD_SEARCH_TIME = 10000;       // tempo massimo di ricerca del cibo in millisecondi
 
     private static final Random RANDOM = new Random();
     private static final double SMOOTH_MOVEMENT_FACTOR = 0.2;
@@ -168,8 +169,15 @@ public class Ant extends GameObject {
     }
 
     private boolean handlePheromoneFoodReturn() {
-        
-        if (!this.hasFoodLoad()) return false;
+
+        if (!this.hasFoodLoad()) {
+            // Se non ha il cibo, ma sta vagando da troppo tempo, torna al nido
+            if (this.getStartTrackTime() - System.nanoTime() > Ant.MAX_FOOD_SEARCH_TIME) {
+                System.out.printf("Sono la formica: %d e sto tornando al nido perchè non trovo niente :(", this.serialNumber);
+                followNestPheromoneGradient();
+            }
+            return false;
+        }
 
         dropFoodIfOnNest();
 
@@ -194,6 +202,7 @@ public class Ant extends GameObject {
         // Vecchio codice con il gradiente
         //Coord pheromoneDirection = this.densityFieldManager.getPheromoneGradient(this.getCenter(), Pheromone.PheromoneType.HOME_TRAIL);
         
+        /*
         double localIntensity = this.densityFieldManager.getTotalIntensity(
             this.getCenter(), Pheromone.PheromoneType.HOME_TRAIL);
         
@@ -203,14 +212,19 @@ public class Ant extends GameObject {
                 serialNumber, pheromoneDirection.length(), localIntensity, 
                 (pheromoneDirection.length() > 0.001) ? "YES" : "NO");
         }
+                
+        */
         
         // Se i feromoni sono troppo deboli, usa movimento casuale
-        if (pheromoneDirection.length() <= 0.001) {
+        if (pheromoneDirection.length() <= Pheromone.MIN_INTENSITY) {
             pheromoneDirection = handleRandomSteering();
         } else {
             pheromoneDirection.normalize();
         }
         
+        
+
+
         applyDirectionChange(pheromoneDirection);
     }
 
@@ -255,6 +269,8 @@ public class Ant extends GameObject {
         // Vecchio codice con il gradiente
         //Coord pheromoneDirection = this.densityFieldManager.getPheromoneGradient(this.getCenter(), Pheromone.PheromoneType.FOOD_TRAIL);
         
+        /*
+
         double localIntensity = this.densityFieldManager.getTotalIntensity(
             this.getCenter(), Pheromone.PheromoneType.FOOD_TRAIL);
         
@@ -264,9 +280,11 @@ public class Ant extends GameObject {
                 serialNumber, pheromoneDirection.length(), localIntensity, 
                 (pheromoneDirection.length() > 0.001) ? "YES" : "NO");
         }
+
+        */
         
         // Se i feromoni sono troppo deboli, usa movimento casuale
-        if (pheromoneDirection.length() <= 0.001) {
+        if (pheromoneDirection.length() <= Pheromone.MIN_INTENSITY) {
             pheromoneDirection = handleRandomSteering();
         } else {
             pheromoneDirection.normalize();

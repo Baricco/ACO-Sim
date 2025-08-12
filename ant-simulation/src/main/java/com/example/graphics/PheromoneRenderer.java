@@ -13,7 +13,7 @@ public class PheromoneRenderer {
 
     private static final double RANDOM_OFFSET = 0.75;           // Per jitter casuale
     private static final double SAMPLING_FACTOR = 0.5;          // Riduce il numero di punti renderizzati
-    private static final double ALPHA_FACTOR = 0.75;            // Fattore di opacità per i feromoni
+    private static final double ALPHA_FACTOR = 1;            // Fattore di opacità per i feromoni
 
     private boolean renderingEnabled = true;
     

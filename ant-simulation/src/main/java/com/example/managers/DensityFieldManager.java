@@ -93,7 +93,7 @@ public class DensityFieldManager {
         
         // Aggiorna lo stato della formica
         ant.setLastPheromonePosition(jitteredPosition);
-        ant.setLastPheromoneTime(getCurrentTime());
+        ant.setLastPheromoneTime(System.nanoTime());
 
 
     }
@@ -106,13 +106,15 @@ public class DensityFieldManager {
 
         if (lastMilestoneTime <= 0) return Pheromone.INITIAL_INTENSITY; // Se non c'è milestone, usa intensità iniziale QUESTA RIGA VA CAMBIATA
 
-        double timeSinceLastMilestone = getCurrentTime() - lastMilestoneTime;
+        double timeSinceLastMilestone = System.nanoTime() - lastMilestoneTime;
 
-        timeSinceLastMilestone /= 1_000_000.0; // Converti nanosecondi in millisecondi
+        timeSinceLastMilestone /= 1_000_000_000.0; // Converti nanosecondi in secondi
 
         double normalizedTime = Math.min(timeSinceLastMilestone / Pheromone.MAX_PHEROMONE_TRAIL_DURATION, 1.0);
 
-        System.out.printf("Ant %d pheromone intensity: %.2f (time: %.2f)\n", ant.getSerialNumber(), Pheromone.INITIAL_INTENSITY * (1 - normalizedTime), timeSinceLastMilestone);
+        if (normalizedTime >= 1.0) return 0;
+
+        //System.out.printf("Ant %d pheromone intensity: %.2f (time: %.2f)\n", ant.getSerialNumber(), Pheromone.INITIAL_INTENSITY * (1 - normalizedTime), timeSinceLastMilestone);
 
         return Math.max(Pheromone.MIN_INTENSITY, Pheromone.INITIAL_INTENSITY * (1 - normalizedTime));
 
@@ -148,7 +150,7 @@ public class DensityFieldManager {
         }
         
         // Tempo minimo
-        double timeSinceLastPheromone = getCurrentTime() - lastTime;
+        double timeSinceLastPheromone = System.nanoTime() - lastTime;
         return timeSinceLastPheromone > MIN_TIME_BETWEEN_PHEROMONES;
     }
 
@@ -164,10 +166,6 @@ public class DensityFieldManager {
             originalPosition.x + Math.cos(angle) * distance,
             originalPosition.y + Math.sin(angle) * distance
         );
-    }
-    
-    private double getCurrentTime() {
-        return System.nanoTime();
     }
     
     public double[][] getDensityField(Pheromone.PheromoneType type) {
