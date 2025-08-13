@@ -11,7 +11,9 @@
    
    <!-- Side Panel a sinistra -->
    <left>
-      <Pane fx:id="sidePanelContainer" prefWidth="250.0">
+      <Pane fx:id="sidePanelContainer" prefWidth="250.0" 
+            prefHeight="700.0" maxHeight="700.0" 
+            BorderPane.alignment="TOP_LEFT">
          <!-- Il sidePanel.fxml verrà caricato qui programmaticamente -->
       </Pane>
    </left>

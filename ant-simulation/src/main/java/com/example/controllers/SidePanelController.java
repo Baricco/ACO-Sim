@@ -76,33 +76,119 @@ public class SidePanelController implements Initializable {
     }
 
     private void setupSliders() {
-        setupDoubleSlider(evaporationRateSlider, evaporationRateValue, 
-                         params.getEvaporationRate(), 2, params::setEvaporationRate);
-        setupDoubleSlider(maxIntensitySlider, maxIntensityValue, 
-                         params.getMaxIntensity(), 1, params::setMaxIntensity);
-        setupDoubleSlider(minIntensitySlider, minIntensityValue, 
-                         params.getMinIntensity(), 2, params::setMinIntensity);
-        setupDoubleSlider(initialIntensitySlider, initialIntensityValue, 
-                         params.getInitialIntensity(), 1, params::setInitialIntensity);
-        setupIntSlider(maxTrailLengthSlider, maxTrailLengthValue, 
-                      (int)params.getMaxPheromoneTrailLength(), v -> params.setMaxPheromoneTrailLength(v));
 
-        setupIntSlider(antSightRadiusSlider, antSightRadiusValue, 
-                      params.getAntSightRadius(), params::setAntSightRadius);
-        setupIntSlider(antFeelRadiusSlider, antFeelRadiusValue, 
-                      params.getAntFeelRadius(), params::setAntFeelRadius);
-        setupIntSlider(antSpeedSlider, antSpeedValue, 
-                      (int)params.getAntSpeed(), v -> params.setAntSpeed(v));
-        setupDoubleSlider(explorationRateSlider, explorationRateValue, 
-                         params.getExplorationRate(), 1, params::setExplorationRate);
+        // Evaporation rate
+        setupSlider(
+            evaporationRateSlider,
+            evaporationRateValue, 
+            SimulationParameters.Constraints.EVAPORATION_RATE_MIN, 
+            SimulationParameters.Constraints.EVAPORATION_RATE_MAX, 
+            params.getEvaporationRate(), 
+            2, 
+            params::setEvaporationRate
+        );
 
-        setupDoubleSlider(diffusionRateSlider, diffusionRateValue, 
-                         params.getDiffusionRate(), 1, params::setDiffusionRate);
+        // Max intensity
+        setupSlider(
+            maxIntensitySlider, 
+            maxIntensityValue, 
+            SimulationParameters.Constraints.MAX_INTENSITY_MIN, 
+            SimulationParameters.Constraints.MAX_INTENSITY_MAX, 
+            params.getMaxIntensity(), 
+            1, 
+            params::setMaxIntensity
+        );
+
+        // Min intensity
+        setupSlider(
+            minIntensitySlider, 
+            minIntensityValue, 
+            SimulationParameters.Constraints.MIN_INTENSITY_MIN, 
+            SimulationParameters.Constraints.MIN_INTENSITY_MAX, 
+            params.getMinIntensity(), 
+            2, 
+            params::setMinIntensity
+        );
+
+        // Initial intensity
+        setupSlider(
+            initialIntensitySlider,
+            initialIntensityValue, 
+            SimulationParameters.Constraints.INITIAL_INTENSITY_MIN, 
+            SimulationParameters.Constraints.INITIAL_INTENSITY_MAX, 
+            params.getInitialIntensity(), 
+            1, 
+            params::setInitialIntensity
+        );
+
+        // Max trail length
+        setupSlider(
+            maxTrailLengthSlider,
+            maxTrailLengthValue, 
+            SimulationParameters.Constraints.MAX_TRAIL_LENGTH_MIN, 
+            SimulationParameters.Constraints.MAX_TRAIL_LENGTH_MAX, 
+            (int)params.getMaxPheromoneTrailLength(), 
+            v -> params.setMaxPheromoneTrailLength(v)
+        );
+
+        // Ant sight radius
+        setupSlider(
+            antSightRadiusSlider,
+            antSightRadiusValue, 
+            SimulationParameters.Constraints.ANT_SIGHT_RADIUS_MIN, 
+            SimulationParameters.Constraints.ANT_SIGHT_RADIUS_MAX, 
+            params.getAntSightRadius(), 
+            params::setAntSightRadius
+        );
+
+        // Ant feel radius
+        setupSlider(
+            antFeelRadiusSlider,
+            antFeelRadiusValue, 
+            SimulationParameters.Constraints.ANT_FEEL_RADIUS_MIN, 
+            SimulationParameters.Constraints.ANT_FEEL_RADIUS_MAX, 
+            params.getAntFeelRadius(), 
+            params::setAntFeelRadius
+        );
+
+        // Ant speed
+        setupSlider(
+            antSpeedSlider,
+            antSpeedValue, 
+            SimulationParameters.Constraints.ANT_SPEED_MIN, 
+            SimulationParameters.Constraints.ANT_SPEED_MAX, 
+            (int)params.getAntSpeed(), 
+            v -> params.setAntSpeed(v)
+        );
+
+        // Exploration rate
+        setupSlider(
+            explorationRateSlider,
+            explorationRateValue, 
+            SimulationParameters.Constraints.EXPLORATION_RATE_MIN, 
+            SimulationParameters.Constraints.EXPLORATION_RATE_MAX, 
+            params.getExplorationRate(), 
+            1, 
+            params::setExplorationRate
+        );
+
+        // Diffusion rate
+        setupSlider(
+            diffusionRateSlider,
+            diffusionRateValue, 
+            SimulationParameters.Constraints.DIFFUSION_RATE_MIN, 
+            SimulationParameters.Constraints.DIFFUSION_RATE_MAX, 
+            params.getDiffusionRate(), 
+            1, 
+            params::setDiffusionRate
+        );
     }
 
-    private void setupDoubleSlider(Slider slider, Label valueLabel, 
-                                  double initialValue, int decimalPlaces, 
-                                  java.util.function.DoubleConsumer setter) {
+    private void setupSlider(Slider slider, Label valueLabel, 
+                                double min, double max, double initialValue, 
+                                int decimalPlaces, java.util.function.DoubleConsumer setter) {
+        slider.setMin(min);
+        slider.setMax(max);
         slider.setValue(initialValue);
         valueLabel.setText(String.format("%." + decimalPlaces + "f", initialValue));
 
@@ -113,8 +199,11 @@ public class SidePanelController implements Initializable {
         });
     }
 
-    private void setupIntSlider(Slider slider, Label valueLabel, 
-                               int initialValue, java.util.function.IntConsumer setter) {
+    private void setupSlider(Slider slider, Label valueLabel, 
+                            double min, double max, int initialValue, 
+                            java.util.function.IntConsumer setter) {
+        slider.setMin(min);
+        slider.setMax(max);
         slider.setValue(initialValue);
         valueLabel.setText(String.valueOf(initialValue));
 

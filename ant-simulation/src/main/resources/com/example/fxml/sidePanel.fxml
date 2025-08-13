@@ -6,8 +6,14 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
 
-<ScrollPane fitToWidth="true" prefWidth="250.0" style="-fx-background: rgba(51, 51, 51, 0.9);" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.controllers.SidePanelController">
+<ScrollPane fitToWidth="true" prefWidth="250.0" prefHeight="800.0" maxHeight="800.0"
+            hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" 
+            styleClass="scrollBar"
+            style="-fx-background: rgba(51, 51, 51, 0.9); 
+                   -fx-background-color: rgba(51, 51, 51, 0.9);" 
+            xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.controllers.SidePanelController">
    <content>
       <VBox spacing="5.0" style="-fx-padding: 10;">
          <children>
@@ -34,12 +40,12 @@
             <Label fx:id="MTTLabel" alignment="CENTER" style="-fx-text-fill: white; -fx-font-size: 10px;" text="0" />
             
             <!-- Pulsanti navigazione -->
-            <VBox alignment="CENTER" spacing="5.0">
+            <HBox alignment="CENTER" spacing="10.0">
                <children>
-                  <Button fx:id="prevAntButton" onAction="#selectPreviousAnt" style="-fx-font-size: 12px; -fx-background-color: #607D8B; -fx-text-fill: white;" text="◀ Previous Ant" />
-                  <Button fx:id="nextAntButton" onAction="#selectNextAnt" style="-fx-font-size: 12px; -fx-background-color: #607D8B; -fx-text-fill: white;" text="Next Ant ▶" />
+                  <Button fx:id="prevAntButton" onAction="#selectPreviousAnt" prefHeight="25.0" prefWidth="90.0" style="-fx-font-size: 11px; -fx-background-color: #607D8B; -fx-text-fill: white;" text="◀ Prev" />
+                  <Button fx:id="nextAntButton" onAction="#selectNextAnt" prefHeight="25.0" prefWidth="90.0" style="-fx-font-size: 11px; -fx-background-color: #607D8B; -fx-text-fill: white;" text="Next ▶" />
                </children>
-            </VBox>
+            </HBox>
             
             <Separator />
             
@@ -51,24 +57,24 @@
             <Label style="-fx-font-weight: bold; -fx-text-fill: white; -fx-font-size: 12px;" text="Pheromone" />
             
             <Label style="-fx-text-fill: white; -fx-font-size: 10px;" text="Evaporation Rate:" />
-            <Slider fx:id="evaporationRateSlider" max="0.99" min="0.1" value="0.85" />
-            <Label fx:id="evaporationRateValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" text="0.85" />
+            <Slider fx:id="evaporationRateSlider" />
+            <Label fx:id="evaporationRateValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" />
             
             <Label style="-fx-text-fill: white; -fx-font-size: 10px;" text="Max Intensity:" />
-            <Slider fx:id="maxIntensitySlider" max="10.0" min="1.0" value="3.0" />
-            <Label fx:id="maxIntensityValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" text="3.0" />
+            <Slider fx:id="maxIntensitySlider" />
+            <Label fx:id="maxIntensityValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" />
             
             <Label style="-fx-text-fill: white; -fx-font-size: 10px;" text="Min Intensity:" />
-            <Slider fx:id="minIntensitySlider" max="0.5" min="0.01" value="0.05" />
-            <Label fx:id="minIntensityValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" text="0.05" />
+            <Slider fx:id="minIntensitySlider" />
+            <Label fx:id="minIntensityValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" />
             
             <Label style="-fx-text-fill: white; -fx-font-size: 10px;" text="Initial Intensity:" />
-            <Slider fx:id="initialIntensitySlider" max="5.0" min="0.1" value="1.0" />
-            <Label fx:id="initialIntensityValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" text="1.0" />
+            <Slider fx:id="initialIntensitySlider" />
+            <Label fx:id="initialIntensityValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" />
             
             <Label style="-fx-text-fill: white; -fx-font-size: 10px;" text="Max Trail Length:" />
-            <Slider fx:id="maxTrailLengthSlider" max="1500.0" min="100.0" value="700.0" />
-            <Label fx:id="maxTrailLengthValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" text="700" />
+            <Slider fx:id="maxTrailLengthSlider" />
+            <Label fx:id="maxTrailLengthValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" />
             
             <Separator />
             
@@ -76,20 +82,20 @@
             <Label style="-fx-font-weight: bold; -fx-text-fill: white; -fx-font-size: 12px;" text="Ant Behavior" />
             
             <Label style="-fx-text-fill: white; -fx-font-size: 10px;" text="Sight Radius:" />
-            <Slider fx:id="antSightRadiusSlider" max="150.0" min="20.0" value="70.0" />
-            <Label fx:id="antSightRadiusValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" text="70" />
+            <Slider fx:id="antSightRadiusSlider" />
+            <Label fx:id="antSightRadiusValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" />
             
             <Label style="-fx-text-fill: white; -fx-font-size: 10px;" text="Feel Radius:" />
-            <Slider fx:id="antFeelRadiusSlider" max="100.0" min="10.0" value="50.0" />
-            <Label fx:id="antFeelRadiusValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" text="50" />
+            <Slider fx:id="antFeelRadiusSlider" />
+            <Label fx:id="antFeelRadiusValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" />
             
             <Label style="-fx-text-fill: white; -fx-font-size: 10px;" text="Speed:" />
-            <Slider fx:id="antSpeedSlider" max="500.0" min="50.0" value="250.0" />
-            <Label fx:id="antSpeedValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" text="250" />
+            <Slider fx:id="antSpeedSlider" />
+            <Label fx:id="antSpeedValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" />
             
             <Label style="-fx-text-fill: white; -fx-font-size: 10px;" text="Exploration Rate:" />
-            <Slider fx:id="explorationRateSlider" max="1.0" min="0.0" value="0.3" />
-            <Label fx:id="explorationRateValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" text="0.3" />
+            <Slider fx:id="explorationRateSlider" />
+            <Label fx:id="explorationRateValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" />
             
             <Separator />
             
@@ -97,8 +103,8 @@
             <Label style="-fx-font-weight: bold; -fx-text-fill: white; -fx-font-size: 12px;" text="Field Diffusion" />
             
             <Label style="-fx-text-fill: white; -fx-font-size: 10px;" text="Diffusion Rate:" />
-            <Slider fx:id="diffusionRateSlider" max="0.8" min="0.0" value="0.3" />
-            <Label fx:id="diffusionRateValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" text="0.3" />
+            <Slider fx:id="diffusionRateSlider" />
+            <Label fx:id="diffusionRateValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" />
             
             <Separator />
             

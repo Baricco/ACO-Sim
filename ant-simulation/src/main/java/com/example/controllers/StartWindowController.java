@@ -19,6 +19,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -88,17 +89,34 @@ public class StartWindowController implements Initializable {
     private void showOptions() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/fxml/options.fxml"));
-            Parent root = loader.load();
+            Parent optionsContent = loader.load();
             
-            Stage optionsStage = new Stage();
-            optionsStage.setTitle("Simulation Options");
-            optionsStage.initModality(Modality.APPLICATION_MODAL);
-            optionsStage.setScene(new Scene(root));
-            optionsStage.setResizable(false);
+            // Crea overlay con sfondo semitrasparente
+            Pane overlay = new Pane();
+            overlay.setStyle("-fx-background-color: rgba(0,0,0,0.7);");
+            overlay.getChildren().add(optionsContent);
             
-            optionsStage.showAndWait();
+            // Centra il contenuto
+            optionsContent.layoutBoundsProperty().addListener((obs, oldBounds, newBounds) -> {
+                optionsContent.setLayoutX((overlay.getWidth() - newBounds.getWidth()) / 2);
+                optionsContent.setLayoutY((overlay.getHeight() - newBounds.getHeight()) / 2);
+            });
+            
+            overlay.widthProperty().addListener((obs, oldVal, newVal) -> {
+                optionsContent.setLayoutX((newVal.doubleValue() - optionsContent.getBoundsInLocal().getWidth()) / 2);
+            });
+            overlay.heightProperty().addListener((obs, oldVal, newVal) -> {
+                optionsContent.setLayoutY((newVal.doubleValue() - optionsContent.getBoundsInLocal().getHeight()) / 2);
+            });
+            
+            // Passa il riferimento per poter chiudere l'overlay
+            OptionsController controller = loader.getController();
+            controller.setOverlay(overlay);
+            
+            // Aggiungi alla StackPane esistente
+            ((StackPane)backgroundPane.getParent()).getChildren().add(overlay);
+            
         } catch (IOException e) {
-            System.err.println("Error loading options.fxml: " + e.getMessage());
             e.printStackTrace();
         }
     }

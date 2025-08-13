@@ -21,10 +21,10 @@
             <Label style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: white; -fx-effect: dropshadow(gaussian, black, 5, 0, 2, 2);" text="ANT SIMULATION" />
             
             <!-- Pulsante Start principale -->
-            <Button fx:id="startButton" onAction="#startFullSimulation" prefHeight="31.0" prefWidth="127.0" styleClass="startButton" text="START" textAlignment="CENTER" />
+            <Button fx:id="startButton" onAction="#startFullSimulation" prefHeight="31.0" prefWidth="150.0" styleClass="startButton" text="START" textAlignment="CENTER" />
             
             <!-- Pulsante Options -->
-            <Button fx:id="optionsButton" onAction="#showOptions" prefHeight="31.0" prefWidth="127.0" styleClass="startButton" text="OPTIONS" textAlignment="CENTER" />
+            <Button fx:id="optionsButton" onAction="#showOptions" prefHeight="31.0" prefWidth="150.0" styleClass="startButton" text="OPTIONS" textAlignment="CENTER" />
          </children>
          <padding>
             <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />

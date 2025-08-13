@@ -40,6 +40,31 @@ public class SimulationParameters {
     private int antNumber = 300;
     private int clumpSize = 500;
     private int clumpNumber = 10;
+
+
+    // ==================== DEFAULT VALUES ====================
+
+    // Pheromone defaults
+    public static final double DEFAULT_EVAPORATION_RATE = 0.85;
+    public static final double DEFAULT_MAX_INTENSITY = 3.0;
+    public static final double DEFAULT_MIN_INTENSITY = 0.05;
+    public static final double DEFAULT_INITIAL_INTENSITY = 1.0;
+    public static final double DEFAULT_MAX_PHEROMONE_TRAIL_LENGTH = 700.0;
+
+    // Ant defaults
+    public static final int DEFAULT_ANT_SIGHT_RADIUS = 70;
+    public static final int DEFAULT_ANT_FEEL_RADIUS = 50;
+    public static final double DEFAULT_ANT_SPEED = 250.0;
+    public static final double DEFAULT_EXPLORATION_RATE = 0.5;
+
+    // Density Field defaults
+    public static final double DEFAULT_DIFFUSION_RATE = 0.3;
+
+    // Setup defaults
+    public static final int DEFAULT_NEST_NUMBER = 1;
+    public static final int DEFAULT_ANT_NUMBER = 300;
+    public static final int DEFAULT_CLUMP_SIZE = 500;
+    public static final int DEFAULT_CLUMP_NUMBER = 10;
     
     // ==================== CONSTRAINTS ====================
     
@@ -47,36 +72,46 @@ public class SimulationParameters {
         // Pheromone constraints
         public static final double EVAPORATION_RATE_MIN = 0.1;
         public static final double EVAPORATION_RATE_MAX = 0.99;
+
         public static final double MAX_INTENSITY_MIN = 1.0;
         public static final double MAX_INTENSITY_MAX = 10.0;
+
         public static final double MIN_INTENSITY_MIN = 0.01;
         public static final double MIN_INTENSITY_MAX = 0.5;
+
         public static final double INITIAL_INTENSITY_MIN = 0.1;
         public static final double INITIAL_INTENSITY_MAX = 5.0;
+
         public static final double MAX_TRAIL_LENGTH_MIN = 100.0;
         public static final double MAX_TRAIL_LENGTH_MAX = 1500.0;
         
         // Ant constraints
         public static final int ANT_SIGHT_RADIUS_MIN = 20;
         public static final int ANT_SIGHT_RADIUS_MAX = 150;
+
         public static final int ANT_FEEL_RADIUS_MIN = 10;
         public static final int ANT_FEEL_RADIUS_MAX = 100;
+
         public static final double ANT_SPEED_MIN = 50.0;
         public static final double ANT_SPEED_MAX = 500.0;
+
         public static final double EXPLORATION_RATE_MIN = 0.0;
         public static final double EXPLORATION_RATE_MAX = 1.0;
         
-        // Density Field constraints (limitato per performance)
+        // Density Field constraints
         public static final double DIFFUSION_RATE_MIN = 0.0;
         public static final double DIFFUSION_RATE_MAX = 0.8;
         
         // Setup constraints
         public static final int NEST_NUMBER_MIN = 1;
-        public static final int NEST_NUMBER_MAX = 3;
+        public static final int NEST_NUMBER_MAX = 5;
+
         public static final int ANT_NUMBER_MIN = 10;
         public static final int ANT_NUMBER_MAX = 500;
+        
         public static final int CLUMP_SIZE_MIN = 50;
         public static final int CLUMP_SIZE_MAX = 1000;
+
         public static final int CLUMP_NUMBER_MIN = 1;
         public static final int CLUMP_NUMBER_MAX = 20;
     }
@@ -222,20 +257,20 @@ public class SimulationParameters {
      * Reset ai valori di default
      */
     public void resetToDefaults() {
-        setEvaporationRate(0.85);
-        setMaxIntensity(3.0);
-        setMinIntensity(0.05);
-        setInitialIntensity(1.0);
-        setMaxPheromoneTrailLength(700.0);
-        setAntSightRadius(70);
-        setAntFeelRadius(50);
-        setAntSpeed(250.0);
-        setExplorationRate(0.3);
-        setDiffusionRate(0.3);
-        setNestNumber(1);
-        setAntNumber(300);
-        setClumpSize(500);
-        setClumpNumber(10);
+        setEvaporationRate(DEFAULT_EVAPORATION_RATE);
+        setMaxIntensity(DEFAULT_MAX_INTENSITY);
+        setMinIntensity(DEFAULT_MIN_INTENSITY);
+        setInitialIntensity(DEFAULT_INITIAL_INTENSITY);
+        setMaxPheromoneTrailLength(DEFAULT_MAX_PHEROMONE_TRAIL_LENGTH);
+        setAntSightRadius(DEFAULT_ANT_SIGHT_RADIUS);
+        setAntFeelRadius(DEFAULT_ANT_FEEL_RADIUS);
+        setAntSpeed(DEFAULT_ANT_SPEED);
+        setExplorationRate(DEFAULT_EXPLORATION_RATE);
+        setDiffusionRate(DEFAULT_DIFFUSION_RATE);
+        setNestNumber(DEFAULT_NEST_NUMBER);
+        setAntNumber(DEFAULT_ANT_NUMBER);
+        setClumpSize(DEFAULT_CLUMP_SIZE);
+        setClumpNumber(DEFAULT_CLUMP_NUMBER);
     }
     
     /**

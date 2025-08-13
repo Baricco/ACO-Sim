@@ -19,3 +19,56 @@
     -fx-background: #7ac34b;
     -fx-padding: 10;
 }
+
+
+/* Scrollbar minimal e elegante */
+.scrollBar {
+    -fx-background: #111111;
+    -fx-background-color: #111111;
+}
+
+/* Track della scrollbar */
+.scrollBar .scroll-bar:vertical .track {
+    -fx-background-color: #333333;
+    -fx-border-color: #333333;
+    -fx-pref-width: 6px;
+}
+
+/* Thumb della scrollbar */
+.scrollBar .scroll-bar:vertical .thumb {
+    -fx-background-color: #555555;
+    -fx-background-radius: 4px;
+    -fx-pref-width: 6px;
+}
+
+/* Thumb al hover */
+.scrollBar .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #777777;
+}
+
+/* Thumb premuto */
+.scrollBar .scroll-bar:vertical .thumb:pressed {
+    -fx-background-color: #999999;
+}
+
+/* Nascondi frecce */
+.scrollBar .scroll-bar:vertical .increment-button,
+.scrollBar .scroll-bar:vertical .decrement-button {
+    -fx-opacity: 0;
+    -fx-pref-height: 0;
+}
+
+/* Nascondi scroll orizzontale */
+.scrollBar .scroll-bar:horizontal {
+    -fx-opacity: 0;
+    -fx-pref-height: 0;
+}
+
+/* Animazione smooth */
+.scrollBar .scroll-bar:vertical {
+    -fx-opacity: 0.6;
+}
+
+.scrollBar:hover .scroll-bar:vertical {
+    -fx-opacity: 1.0;
+}
