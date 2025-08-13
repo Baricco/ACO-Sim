@@ -20,17 +20,17 @@ public class Ant extends GameObject {
     // Costanti
     public static final int ANT_SIZE = 20;
     public static final int ANT_SIGHT_RADIUS = 70;                       // Raggio di visione
-    public static final int ANT_FEEL_RADIUS = 30;                       // Raggio di percezione per i feromoni
+    public static final int ANT_FEEL_RADIUS = 50;                       // Raggio di percezione per i feromoni
 
 
-    public static final double ANT_SENSOR_ANGLE = Math.PI / 4;          // 45 gradi
-    public static final double TURN_AROUND_ANGLE_OFFSET = Math.PI / 4;  // 45 gradi
+    public static final double ANT_SENSOR_ANGLE = Math.PI / 4;          // Angolo di 45 gradi per i sensori
+    public static final double TURN_AROUND_ANGLE_OFFSET = Math.PI / 4;  // Offset di 45 gradi nel turn around della formica
     public static final Color ANT_FEEL_COLOR = Color.rgb(255, 255, 0, 0.2); // Colore per il raggio di percezione
     public static final Color ANT_COLOR = Color.RED;
     public static final double ANT_SPEED = 250.0; // pixel/secondo
     public static final int WINDOW_BOUND_MARGIN = -ANT_SIZE/2; // Margine per il rimbalzo sui bordi della finestra
     public static final int MAX_FOOD_SEARCH_TIME = 10000;       // tempo massimo di ricerca del cibo in millisecondi
-    public static final double EXPLORATION_RATE = 0.5;         // Probabilità di esplorare nuovi percorsi, piuttosto che seguire quelli esistenti
+    public static final double EXPLORATION_RATE = 0.3;         // Probabilità di esplorare nuovi percorsi, piuttosto che seguire quelli esistenti
 
     private static final Random RANDOM = new Random();
     private static final double SMOOTH_MOVEMENT_FACTOR = 0.2;
