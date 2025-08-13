@@ -44,6 +44,8 @@ public class SidePanelController implements Initializable {
     // Ant Parameters
     @FXML private Slider antSightRadiusSlider;
     @FXML private Label antSightRadiusValue;
+    @FXML private Slider antSensorRadiusSlider;
+    @FXML private Label antSensorRadiusValue;
     @FXML private Slider antFeelRadiusSlider;
     @FXML private Label antFeelRadiusValue;
     @FXML private Slider antSpeedSlider;
@@ -151,6 +153,15 @@ public class SidePanelController implements Initializable {
             params::setAntFeelRadius
         );
 
+        setupSlider(
+            antSensorRadiusSlider,
+            antSensorRadiusValue, 
+            SimulationParameters.Constraints.ANT_SENSOR_RADIUS_MIN, 
+            SimulationParameters.Constraints.ANT_SENSOR_RADIUS_MAX, 
+            params.getAntSensorRadius(),
+            params::setAntSensorRadius
+        );
+
         // Ant speed
         setupSlider(
             antSpeedSlider,
@@ -222,6 +233,7 @@ public class SidePanelController implements Initializable {
         maxTrailLengthValue.setText(String.valueOf((int)params.getMaxPheromoneTrailLength()));
         antSightRadiusValue.setText(String.valueOf(params.getAntSightRadius()));
         antFeelRadiusValue.setText(String.valueOf(params.getAntFeelRadius()));
+        antSensorRadiusValue.setText(String.valueOf(params.getAntSensorRadius()));
         antSpeedValue.setText(String.valueOf((int)params.getAntSpeed()));
         explorationRateValue.setText(String.format("%.1f", params.getExplorationRate()));
         diffusionRateValue.setText(String.format("%.1f", params.getDiffusionRate()));

@@ -5,15 +5,10 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Slider?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<ScrollPane fitToWidth="true" prefWidth="250.0" prefHeight="800.0" maxHeight="800.0"
-            hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" 
-            styleClass="scrollBar"
-            style="-fx-background: rgba(51, 51, 51, 0.9); 
-                   -fx-background-color: rgba(51, 51, 51, 0.9);" 
-            xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.controllers.SidePanelController">
+<ScrollPane fitToWidth="true" hbarPolicy="NEVER" maxHeight="800.0" prefHeight="800.0" prefWidth="250.0" style="-fx-background: rgba(51, 51, 51, 0.9);                     -fx-background-color: rgba(51, 51, 51, 0.9);" styleClass="scrollBar" vbarPolicy="AS_NEEDED" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.controllers.SidePanelController">
    <content>
       <VBox spacing="5.0" style="-fx-padding: 10;">
          <children>
@@ -88,7 +83,11 @@
             <Label style="-fx-text-fill: white; -fx-font-size: 10px;" text="Feel Radius:" />
             <Slider fx:id="antFeelRadiusSlider" />
             <Label fx:id="antFeelRadiusValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" />
-            
+
+            <Label style="-fx-text-fill: white; -fx-font-size: 10px;" text="Ant Sensor Radius:" />
+            <Slider fx:id="antSensorRadiusSlider" />
+            <Label fx:id="antSensorRadiusValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" />
+
             <Label style="-fx-text-fill: white; -fx-font-size: 10px;" text="Speed:" />
             <Slider fx:id="antSpeedSlider" />
             <Label fx:id="antSpeedValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" />

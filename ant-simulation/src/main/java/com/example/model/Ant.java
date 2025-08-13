@@ -25,6 +25,7 @@ public class Ant extends GameObject {
     public static final double ANT_SENSOR_ANGLE = Math.PI / 4;          // Angolo di 45 gradi per i sensori
     public static final double TURN_AROUND_ANGLE_OFFSET = Math.PI / 4;  // Offset di 45 gradi nel turn around della formica
     public static final Color ANT_FEEL_COLOR = Color.rgb(255, 255, 0, 0.2); // Colore per il raggio di percezione
+    public static final Color ANT_SENSOR_COLOR = Color.rgb(255, 0, 255, 0.2); // Colore per il raggio di sensori
     public static final Color ANT_COLOR = Color.RED;
     public static final int WINDOW_BOUND_MARGIN = -ANT_SIZE/2; // Margine per il rimbalzo sui bordi della finestra
     public static final int MAX_FOOD_SEARCH_TIME = 10000;       // tempo massimo di ricerca del cibo in millisecondi
@@ -126,6 +127,7 @@ public class Ant extends GameObject {
                 break;
         }
     }
+    
 
     private void allPheromonesBehaviour() {
         // Gestisci prima il caso di ritorno con cibo
@@ -565,6 +567,14 @@ public class Ant extends GameObject {
         return lastMilestoneTime;
     }
 
+
+    /*
+     * Ritorna i sensori nell'ordine: sinistro, frontale, destro
+     */
+    public Sensor[] getSensors() {
+        return new Sensor[] { leftSensor, frontSensor, rightSensor };
+    }
+
     // Getters per la visualizzazione
     public double getAngle() { return angle; }
     public Color getColor() { return ANT_COLOR; }
@@ -601,8 +611,10 @@ public class Ant extends GameObject {
         this.size = newSize;
     }
 
-    private class Sensor {
+    public class Sensor {
+        
         private double angleOffset;  // Offset rispetto alla direzione della formica
+
 
         public Sensor(double angleOffset) {
             this.angleOffset = angleOffset;
@@ -612,19 +624,23 @@ public class Ant extends GameObject {
             if (densityFieldManager == null) return 0.0;
             
             // Calcola posizione del sensore relativa alla direzione corrente
+            
+            return densityFieldManager.getMeanIntensity(getSensorPosition(), type, ParameterAdapter.getAntSensorRadius());
+        }
+
+        public Coord getSensorPosition() {
+
             double antAngle = Math.atan2(direction.y, direction.x);
             double sensorAngle = antAngle + angleOffset;
-            
-            Coord sensorPosition = new Coord(
+
+            return new Coord(
                 getCenter().x + getAntFeelRadius() * Math.cos(sensorAngle),
                 getCenter().y + getAntFeelRadius() * Math.sin(sensorAngle)
             );
-            
-            return densityFieldManager.getTotalIntensity(sensorPosition, type);
         }
 
         public Coord getPointingDirection() {
-            // Ritorna la DIREZIONE verso cui punta il sensore, non la posizione
+            // Ritorna la direzione verso cui punta il sensore
             double antAngle = Math.atan2(direction.y, direction.x);
             double sensorAngle = antAngle + angleOffset;
             

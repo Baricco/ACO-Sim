@@ -315,17 +315,25 @@ public class DensityFieldManager {
      */
 
     /**
-     * Ottieni intensità totale in una posizione - per navigazione formiche
+     * Ottieni intensità media in una posizione, in un cerchio - per navigazione formiche
      */
-    public double getTotalIntensity(Coord position, Pheromone.PheromoneType type) {
+    public double getMeanIntensity(Coord position, Pheromone.PheromoneType type, int radius) {
         int x = (int) (position.x / CELL_SIZE);
         int y = (int) (position.y / CELL_SIZE);
         
         if (!isValidCell(x, y)) return 0;
         
         double [][] field = getDensityField(type);
-            
-        return field[x][y];
+
+        double totalIntensity = 0;
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dy = -radius; dy <= radius; dy++) {
+                if (Math.abs(dx) + Math.abs(dy) <= radius) {
+                    totalIntensity += getFieldValue(field, x + dx, y + dy);
+                }
+            }
+        }
+        return totalIntensity / (Math.PI * radius * radius);
     }
     /**
      * Calcola gradiente per navigazione formiche

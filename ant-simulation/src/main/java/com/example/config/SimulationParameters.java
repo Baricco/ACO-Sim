@@ -29,6 +29,7 @@ public class SimulationParameters {
     private int antFeelRadius = 50;
     private double antSpeed = 250.0;
     private double explorationRate = 0.3;
+    private int antSensorRadius = 10;              // Radius for pheromone sensing
     
     // Density Field Settings
     private double diffusionRate = 0.3;
@@ -91,6 +92,9 @@ public class SimulationParameters {
 
         public static final int ANT_FEEL_RADIUS_MIN = 10;
         public static final int ANT_FEEL_RADIUS_MAX = 100;
+
+        public static final int ANT_SENSOR_RADIUS_MIN = 1;
+        public static final int ANT_SENSOR_RADIUS_MAX = 30;
 
         public static final double ANT_SPEED_MIN = 50.0;
         public static final double ANT_SPEED_MAX = 500.0;
@@ -157,7 +161,7 @@ public class SimulationParameters {
         evaporationRate = clamp(value, Constraints.EVAPORATION_RATE_MIN, Constraints.EVAPORATION_RATE_MAX);
         notifyListeners("evaporationRate", oldValue, evaporationRate);
     }
-    
+
     public double getMaxIntensity() { return maxIntensity; }
     public void setMaxIntensity(double value) {
         double oldValue = maxIntensity;
@@ -200,6 +204,13 @@ public class SimulationParameters {
         int oldValue = antFeelRadius;
         antFeelRadius = (int) clamp(value, Constraints.ANT_FEEL_RADIUS_MIN, Constraints.ANT_FEEL_RADIUS_MAX);
         notifyListeners("antFeelRadius", oldValue, antFeelRadius);
+    }
+
+    public int getAntSensorRadius() { return antSensorRadius; }
+    public void setAntSensorRadius(int value) {
+        int oldValue = antSensorRadius;
+        antSensorRadius = (int) clamp(value, Constraints.ANT_SENSOR_RADIUS_MIN, Constraints.ANT_SENSOR_RADIUS_MAX);
+        notifyListeners("antSensorRadius", oldValue, antSensorRadius);
     }
     
     public double getAntSpeed() { return antSpeed; }

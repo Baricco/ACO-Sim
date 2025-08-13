@@ -100,6 +100,7 @@ public class GameCanvas extends Canvas {
         if (isSelected) {
             // Seleziona lo sprite speciale per la formica selezionata
             renderAnt(ant, loadImageCached("selectedAntSprite.png"));
+
             // Disegna il raggio di percezione della formica
             gc.setFill(Ant.ANT_FEEL_COLOR);
             gc.fillOval(
@@ -109,9 +110,29 @@ public class GameCanvas extends Canvas {
                 ParameterAdapter.getAntSightRadius() * 2
             );
 
+            // Disegna i sensori e i loro raggi
+            drawAntSensors(ant);
+
         }
         else renderAnt(ant);
         
+    }
+
+    private void drawAntSensors(Ant ant) {
+
+        gc.setFill(Ant.ANT_SENSOR_COLOR);
+
+        for (Ant.Sensor sensor : ant.getSensors()) {
+
+            Coord sensorPos = sensor.getSensorPosition();
+            // Disegna il sensore come un cerchio
+            gc.fillOval(
+                sensorPos.x - ParameterAdapter.getAntSensorRadius(),
+                sensorPos.y - ParameterAdapter.getAntSensorRadius(),
+                ParameterAdapter.getAntSensorRadius() * 2,
+                ParameterAdapter.getAntSensorRadius() * 2
+            );
+        }
     }
 
     private void renderAnt(Ant ant) {

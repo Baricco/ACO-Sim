@@ -14,6 +14,10 @@ public class ParameterAdapter {
     public static double getPheromoneEvaporationRate() {
         return params.getEvaporationRate();
     }
+
+    public static int getAntSensorRadius() {
+        return params.getAntSensorRadius();
+    }
     
     public static double getPheromoneMaxIntensity() {
         return params.getMaxIntensity();
