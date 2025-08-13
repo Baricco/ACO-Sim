@@ -2,6 +2,7 @@ package com.example.model;
 
 import java.util.Random;
 
+import com.example.config.ParameterAdapter;
 import com.example.graphics.Coord;
 import com.example.graphics.GameCanvas;
 import com.example.managers.DensityFieldManager;
@@ -19,18 +20,14 @@ public class Ant extends GameObject {
 
     // Costanti
     public static final int ANT_SIZE = 20;
-    public static final int ANT_SIGHT_RADIUS = 70;                       // Raggio di visione
-    public static final int ANT_FEEL_RADIUS = 50;                       // Raggio di percezione per i feromoni
 
 
     public static final double ANT_SENSOR_ANGLE = Math.PI / 4;          // Angolo di 45 gradi per i sensori
     public static final double TURN_AROUND_ANGLE_OFFSET = Math.PI / 4;  // Offset di 45 gradi nel turn around della formica
     public static final Color ANT_FEEL_COLOR = Color.rgb(255, 255, 0, 0.2); // Colore per il raggio di percezione
     public static final Color ANT_COLOR = Color.RED;
-    public static final double ANT_SPEED = 250.0; // pixel/secondo
     public static final int WINDOW_BOUND_MARGIN = -ANT_SIZE/2; // Margine per il rimbalzo sui bordi della finestra
     public static final int MAX_FOOD_SEARCH_TIME = 10000;       // tempo massimo di ricerca del cibo in millisecondi
-    public static final double EXPLORATION_RATE = 0.3;         // Probabilità di esplorare nuovi percorsi, piuttosto che seguire quelli esistenti
 
     private static final Random RANDOM = new Random();
     private static final double SMOOTH_MOVEMENT_FACTOR = 0.2;
@@ -196,7 +193,7 @@ public class Ant extends GameObject {
     private void followNestPheromoneGradient() {
         
         // Se il Nest è nel raggio di visione della formica, vai diretto al Nest
-        if (nest.getPos().distance(this.getCenter()) <= ANT_SIGHT_RADIUS + this.nest.getSize()) {
+        if (nest.getPos().distance(this.getCenter()) <= getAntSightRadius() + this.nest.getSize()) {
             setDirection(calcDirectionToNest());
             return;
         }
@@ -220,7 +217,7 @@ public class Ant extends GameObject {
         */
         
         // Se i feromoni sono troppo deboli, usa movimento casuale
-        if (pheromoneDirection.length() <= Pheromone.MIN_INTENSITY) {
+        if (pheromoneDirection.length() <= ParameterAdapter.getPheromoneMinIntensity()) {
             pheromoneDirection = handleRandomSteering();
         } else {
             pheromoneDirection.normalize();
@@ -262,7 +259,7 @@ public class Ant extends GameObject {
     private void followFoodPheromoneGradient() {
 
         // Se il cibo è nel raggio di visione della formica, vai diretto al cibo
-        Coord foodDirection = this.multiHashGrid.getNearestFoodDirection(pos, ANT_FEEL_RADIUS);
+        Coord foodDirection = this.multiHashGrid.getNearestFoodDirection(pos, getAntFeelRadius());
         if (foodDirection != null) {
             setDirection(foodDirection);
             return;
@@ -288,7 +285,7 @@ public class Ant extends GameObject {
         */
         
         // Se i feromoni sono troppo deboli, usa movimento casuale
-        if (pheromoneDirection.length() <= Pheromone.MIN_INTENSITY) {
+        if (pheromoneDirection.length() <= ParameterAdapter.getPheromoneMinIntensity()) {
             pheromoneDirection = handleRandomSteering();
         } else {
             pheromoneDirection.normalize();
@@ -378,8 +375,8 @@ public class Ant extends GameObject {
         if (direction == null) return;
 
         Coord movement = new Coord(
-            direction.x * deltaTime * ANT_SPEED,
-            direction.y * deltaTime * ANT_SPEED
+            direction.x * deltaTime * getAntSpeed(),
+            direction.y * deltaTime * getAntSpeed()
         );
         
         this.movePos(movement);
@@ -455,7 +452,7 @@ public class Ant extends GameObject {
 
         double maxIntensity = Math.max(leftIntensity, Math.max(frontIntensity, rightIntensity));
 
-        if (maxIntensity <= Pheromone.MIN_INTENSITY) {
+        if (maxIntensity <= ParameterAdapter.getPheromoneMinIntensity()) {
             // Se tutte le intensità sono molto basse, usa un vettore casuale
             return handleRandomSteering();
         }
@@ -470,9 +467,9 @@ public class Ant extends GameObject {
 
 
         // Calcola la probabilità per ogni direzione come intensità relativa + tasso di esplorazione
-        double leftProbability = leftIntensity / totalIntensity + EXPLORATION_RATE / 3;
-        double frontProbability = frontIntensity / totalIntensity + EXPLORATION_RATE / 3;
-        double rightProbability = rightIntensity / totalIntensity + EXPLORATION_RATE / 3;
+        double leftProbability = leftIntensity / totalIntensity + getExplorationRate() / 3;
+        double frontProbability = frontIntensity / totalIntensity + getExplorationRate() / 3;
+        double rightProbability = rightIntensity / totalIntensity + getExplorationRate() / 3;
 
 
         // normalizzazione delle probabilità
@@ -573,6 +570,22 @@ public class Ant extends GameObject {
     public Color getColor() { return ANT_COLOR; }
     public Coord getDirection() { return new Coord(direction.x, direction.y); }
 
+    public static int getAntSightRadius() {
+        return ParameterAdapter.getAntSightRadius();
+    }
+
+    public static int getAntFeelRadius() {
+        return ParameterAdapter.getAntFeelRadius();
+    }
+
+    public static double getAntSpeed() {
+        return ParameterAdapter.getAntSpeed();
+    }
+
+    public static double getExplorationRate() {
+        return ParameterAdapter.getExplorationRate();
+    }
+
     @Override
     public String toString() {
         return String.format(
@@ -603,8 +616,8 @@ public class Ant extends GameObject {
             double sensorAngle = antAngle + angleOffset;
             
             Coord sensorPosition = new Coord(
-                getCenter().x + ANT_FEEL_RADIUS * Math.cos(sensorAngle),
-                getCenter().y + ANT_FEEL_RADIUS * Math.sin(sensorAngle)
+                getCenter().x + getAntFeelRadius() * Math.cos(sensorAngle),
+                getCenter().y + getAntFeelRadius() * Math.sin(sensorAngle)
             );
             
             return densityFieldManager.getTotalIntensity(sensorPosition, type);

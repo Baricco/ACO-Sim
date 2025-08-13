@@ -2,8 +2,6 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
@@ -11,37 +9,19 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.controllers.SimulationController">
    
-   <!-- Canvas principale con overlay -->
+   <!-- Side Panel a sinistra -->
+   <left>
+      <Pane fx:id="sidePanelContainer" prefWidth="250.0">
+         <!-- Il sidePanel.fxml verrà caricato qui programmaticamente -->
+      </Pane>
+   </left>
+   
+   <!-- Canvas principale -->
    <center>
-      <AnchorPane>
-         <!-- Canvas di background che occupa tutto lo spazio -->
-         <Pane fx:id="canvasContainer" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: lightblue;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-         
-         <!-- Overlay semitrasparente in basso a destra -->
-         <Pane prefHeight="300.0" prefWidth="200.0" style="-fx-background-color: rgba(51, 51, 51, 0.8);" styleClass="rightPane" AnchorPane.bottomAnchor="0" AnchorPane.rightAnchor="0">
-            <children>
-               <Label alignment="CENTER" layoutX="68.0" layoutY="10.0" prefHeight="17.0" prefWidth="65.0" text="Ant Stats" textAlignment="CENTER" textFill="WHITE" />
-               <Separator layoutY="34.0" prefHeight="17.0" prefWidth="200.0" />
-               <Label alignment="CENTER" layoutY="59.0" prefHeight="17.0" prefWidth="100.0" text="Serial Number:" textAlignment="CENTER" textFill="WHITE" />
-               <Label alignment="CENTER" layoutY="93.0" prefHeight="17.0" prefWidth="100.0" text="Start Time:" textAlignment="CENTER" textFill="WHITE" />
-               <Label alignment="CENTER" layoutY="121.0" prefHeight="17.0" prefWidth="100.0" text="Last Food DT:" textAlignment="CENTER" textFill="WHITE" />
-               <Label alignment="CENTER" layoutY="155.0" prefHeight="17.0" prefWidth="100.0" text="Last Nest DT:" textAlignment="CENTER" textFill="WHITE" />
-               <Label alignment="CENTER" layoutY="188.0" prefHeight="17.0" prefWidth="100.0" text="Last Trip Time:" textAlignment="CENTER" textFill="WHITE" />
-               <Label alignment="CENTER" layoutY="221.0" prefHeight="17.0" prefWidth="100.0" text="Mean Trip Time:" textAlignment="CENTER" textFill="WHITE" />
-               <Label fx:id="serialNumberLabel" alignment="CENTER" layoutX="100.0" layoutY="59.0" prefHeight="17.0" prefWidth="100.0" text="0" textAlignment="CENTER" textFill="WHITE" />
-               <Label fx:id="startTimeLabel" alignment="CENTER" layoutX="100.0" layoutY="93.0" prefHeight="17.0" prefWidth="100.0" text="0" textAlignment="CENTER" textFill="WHITE" />
-               <Label fx:id="LFDTLabel" alignment="CENTER" layoutX="100.0" layoutY="121.0" prefHeight="17.0" prefWidth="100.0" text="0" textAlignment="CENTER" textFill="WHITE" />
-               <Label fx:id="LNDTLabel" alignment="CENTER" layoutX="100.0" layoutY="155.0" prefHeight="17.0" prefWidth="100.0" text="0" textAlignment="CENTER" textFill="WHITE" />
-               <Label fx:id="LTTLabel" alignment="CENTER" layoutX="100.0" layoutY="188.0" prefHeight="17.0" prefWidth="100.0" text="0" textAlignment="CENTER" textFill="WHITE" />
-               <Label fx:id="MTTLabel" alignment="CENTER" layoutX="100.0" layoutY="221.0" prefHeight="17.0" prefWidth="100.0" text="0" textAlignment="CENTER" textFill="WHITE" />
-               <Button layoutX="24.0" layoutY="261.0" mnemonicParsing="false" onAction="#selectPreviousAnt" style="-fx-font-size: 16px; -fx-font-family: 'Segoe UI Symbol', Arial; -fx-font-weight: bold;" text="◀" textAlignment="CENTER" />
-               <Button layoutX="124.0" layoutY="261.0" mnemonicParsing="false" onAction="#selectNextAnt" style="-fx-font-size: 16px; -fx-font-family: 'Segoe UI Symbol', Arial; -fx-font-weight: bold;" text="▶" textAlignment="CENTER" />
-            </children>
-         </Pane>
-      </AnchorPane>
+      <Pane fx:id="canvasContainer" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: lightblue;" />
    </center>
    
-   <!-- Barra di controllo in alto (resta uguale) -->
+   <!-- Barra di controllo in alto -->
    <top>
       <HBox alignment="CENTER_LEFT" spacing="10.0" style="-fx-background-color: #333333; -fx-padding: 10;">
          <children>

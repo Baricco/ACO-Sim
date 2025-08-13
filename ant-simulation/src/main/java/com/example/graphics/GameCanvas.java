@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.example.config.ParameterAdapter;
 import com.example.model.Ant;
 import com.example.model.Food;
 import com.example.model.FoodClump;
@@ -101,8 +102,12 @@ public class GameCanvas extends Canvas {
             renderAnt(ant, loadImageCached("selectedAntSprite.png"));
             // Disegna il raggio di percezione della formica
             gc.setFill(Ant.ANT_FEEL_COLOR);
-            gc.fillOval(ant.getCenter().x - Ant.ANT_SIGHT_RADIUS, ant.getCenter().y - Ant.ANT_SIGHT_RADIUS, 
-                        Ant.ANT_SIGHT_RADIUS * 2, Ant.ANT_SIGHT_RADIUS * 2);
+            gc.fillOval(
+                ant.getCenter().x - ParameterAdapter.getAntSightRadius(),
+                ant.getCenter().y - ParameterAdapter.getAntSightRadius(),
+                ParameterAdapter.getAntSightRadius() * 2,
+                ParameterAdapter.getAntSightRadius() * 2
+            );
 
         }
         else renderAnt(ant);

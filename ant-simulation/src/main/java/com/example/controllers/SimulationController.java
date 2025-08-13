@@ -11,7 +11,9 @@ import com.example.simulation.FullSimulation;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
@@ -22,19 +24,14 @@ import javafx.scene.layout.Pane;
 public class SimulationController implements Initializable {
 
     @FXML private Pane canvasContainer;
+    @FXML private Pane sidePanelContainer;
     @FXML private Button pauseButton;
     @FXML private Label statusLabel;
     @FXML private Label statsLabel;
 
-    @FXML private Label serialNumberLabel;
-    @FXML private Label startTimeLabel;
-    @FXML private Label LFDTLabel;
-    @FXML private Label LNDTLabel;
-    @FXML private Label LTTLabel;
-    @FXML private Label MTTLabel;
-    
     private GameCanvas gameCanvas;
     private SimulationManager simulationManager;
+    private SidePanelController sidePanelController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -50,7 +47,6 @@ public class SimulationController implements Initializable {
         // Ottieni le dimensioni del container
         double width = canvasContainer.getWidth();
         double height = canvasContainer.getHeight();
-        
 
         // Crea il canvas per il rendering
         gameCanvas = new GameCanvas(width, height);
@@ -61,9 +57,11 @@ public class SimulationController implements Initializable {
         
         canvasContainer.getChildren().add(gameCanvas);
         
+        // Carica il side panel
+        loadSidePanel();
+        
         // Crea il simulation manager
         simulationManager = new SimulationManager(gameCanvas);
-
         simulationManager.setStatsUpdateCallback(this::updateStatsLabel);
         
         // Inizializza UI
@@ -73,22 +71,33 @@ public class SimulationController implements Initializable {
         handleStart();
     }
 
+    private void loadSidePanel() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/fxml/sidePanel.fxml"));
+            Node sidePanel = loader.load();
+            
+            // Ottieni il controller del sidePanel
+            sidePanelController = loader.getController();
+            sidePanelController.setParentController(this);
+            
+            sidePanelContainer.getChildren().add(sidePanel);
+            
+        } catch (IOException e) {
+            System.err.println("Error loading sidePanel.fxml: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
     private void updateStatsLabel(long activeAnts, long activeFood, double fps) {
         
         double antStats[] = simulationManager.getSelectedAntStats();
 
-        if (antStats != null) {
-            // Aggiorna le statistiche delle formiche nel rightPane
+        // Delega l'aggiornamento delle ant stats al sidePanelController
+        if (sidePanelController != null) {
             Platform.runLater(() -> {
-                serialNumberLabel.setText(antStats[0] == -1 ? "N/A" : (int)antStats[0] + "");
-                startTimeLabel.setText(antStats[1] == -1 ? "N/A" : antStats[1] + " s");
-                LFDTLabel.setText(antStats[2] == -1 ? "N/A" : antStats[2] + " s");
-                LNDTLabel.setText(antStats[3] == -1 ? "N/A" : antStats[3] + " s");
-                LTTLabel.setText(antStats[4] == -1 ? "N/A" : antStats[4] + " s");
-                MTTLabel.setText(antStats[5] == -1 ? "N/A" : antStats[5] + " s");
+                sidePanelController.updateAntStats(antStats);
             });
         }
-
 
         // Aggiorna la Top UI sul thread JavaFX
         Platform.runLater(() -> {
@@ -97,8 +106,6 @@ public class SimulationController implements Initializable {
                     activeAnts, activeFood, fps));
             }
         });
-
-
     }
 
     private void waitForCanvasReady() {
@@ -139,29 +146,10 @@ public class SimulationController implements Initializable {
         }
                 
         waitForCanvasReady();
-    
     }
 
-    /*
     @FXML
-    private void handleDemo() {
-        if (gameCanvas == null || simulationManager == null) return;
-        
-        System.out.println("Starting demo simulation");
-        
-        // Crea demo simulation
-        DemoSimulation demo = new DemoSimulation(
-            gameCanvas.getWidth(), 
-            gameCanvas.getHeight()
-        );
-        
-        simulationManager.startSimulation(demo);
-        updateUI();
-    }
-    */
-
-    @FXML
-    private void selectNextAnt() {
+    public void selectNextAnt() {
         if (simulationManager == null) return;
         
         simulationManager.selectNextAnt();
@@ -169,7 +157,7 @@ public class SimulationController implements Initializable {
     }
 
     @FXML
-    private void selectPreviousAnt() {
+    public void selectPreviousAnt() {
         if (simulationManager == null) return;
         
         simulationManager.selectPreviousAnt();
@@ -229,5 +217,4 @@ public class SimulationController implements Initializable {
     public SimulationManager getSimulationManager() {
         return simulationManager;
     }
-
 }

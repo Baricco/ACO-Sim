@@ -5,14 +5,22 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import com.example.App;
+import com.example.config.SimulationParameters;
 import com.example.graphics.GameCanvas;
 import com.example.managers.SimulationManager;
 import com.example.simulation.DemoSimulation;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 /**
  * Controller per la finestra di start (startWindow.fxml)
@@ -74,6 +82,89 @@ public class StartWindowController implements Initializable {
             System.err.println("Error loading simulation scene: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+    
+    @FXML
+    private void showOptions() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/fxml/options.fxml"));
+            Parent root = loader.load();
+            
+            Stage optionsStage = new Stage();
+            optionsStage.setTitle("Simulation Options");
+            optionsStage.initModality(Modality.APPLICATION_MODAL);
+            optionsStage.setScene(new Scene(root));
+            optionsStage.setResizable(false);
+            
+            optionsStage.showAndWait();
+        } catch (IOException e) {
+            System.err.println("Error loading options.fxml: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
+
+    private void setupOptionsDialog(FXMLLoader loader, Stage stage) {
+        Parent root = loader.getRoot();
+        SimulationParameters params = SimulationParameters.getInstance();
+        
+        // Trova i controlli tramite lookup
+        Slider nestSlider = (Slider) root.lookup("#nestNumberSlider");
+        Slider antSlider = (Slider) root.lookup("#antNumberSlider");
+        Slider clumpSizeSlider = (Slider) root.lookup("#clumpSizeSlider");
+        Slider clumpNumberSlider = (Slider) root.lookup("#clumpNumberSlider");
+        
+        Label nestValue = (Label) root.lookup("#nestNumberValue");
+        Label antValue = (Label) root.lookup("#antNumberValue");
+        Label clumpSizeValue = (Label) root.lookup("#clumpSizeValue");
+        Label clumpNumberValue = (Label) root.lookup("#clumpNumberValue");
+        
+        Button resetButton = (Button) root.lookup("#resetButton");
+        Button cancelButton = (Button) root.lookup("#cancelButton");
+        Button okButton = (Button) root.lookup("#okButton");
+        
+        // Imposta valori iniziali
+        nestSlider.setValue(params.getNestNumber());
+        antSlider.setValue(params.getAntNumber());
+        clumpSizeSlider.setValue(params.getClumpSize());
+        clumpNumberSlider.setValue(params.getClumpNumber());
+        
+        // Listener per aggiornare valori
+        nestSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
+            int value = newVal.intValue();
+            nestValue.setText(String.valueOf(value));
+            params.setNestNumber(value);
+        });
+        
+        antSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
+            int value = newVal.intValue();
+            antValue.setText(String.valueOf(value));
+            params.setAntNumber(value);
+        });
+        
+        clumpSizeSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
+            int value = newVal.intValue();
+            clumpSizeValue.setText(String.valueOf(value));
+            params.setClumpSize(value);
+        });
+        
+        clumpNumberSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
+            int value = newVal.intValue();
+            clumpNumberValue.setText(String.valueOf(value));
+            params.setClumpNumber(value);
+        });
+        
+        // Azioni pulsanti
+        resetButton.setOnAction(e -> {
+            params.resetToDefaults();
+            nestSlider.setValue(params.getNestNumber());
+            antSlider.setValue(params.getAntNumber());
+            clumpSizeSlider.setValue(params.getClumpSize());
+            clumpNumberSlider.setValue(params.getClumpNumber());
+        });
+        
+        cancelButton.setOnAction(e -> stage.close());
+        okButton.setOnAction(e -> stage.close());
     }
     
     /**

@@ -3,6 +3,7 @@ package com.example.managers;
 import java.util.Random;
 import java.util.stream.IntStream;
 
+import com.example.config.ParameterAdapter;
 import com.example.graphics.Coord;
 import com.example.model.Ant;
 import com.example.model.Pheromone;
@@ -17,18 +18,13 @@ public class DensityFieldManager {
     // Campi di densità separati per tipo
     private final double [][] foodDensity;
     private final double [][] homeDensity;
-    
-    // Parametri di simulazione
-    private static final double  MAX_INTENSITY = Pheromone.MAX_INTENSITY;
-    private static final double  MIN_INTENSITY = Pheromone.MIN_INTENSITY;
-    
+        
     // Costanti per limitare il piazzamento dei feromoni
     private static final double MIN_DISTANCE_BETWEEN_PHEROMONES = Pheromone.PHEROMONE_SIZE; // Distanza minima tra i feromoni
     private static final double JITTER_RADIUS = MIN_DISTANCE_BETWEEN_PHEROMONES * 0.15;
-    private static final double MIN_TIME_BETWEEN_PHEROMONES = MIN_DISTANCE_BETWEEN_PHEROMONES / Ant.ANT_SPEED; // secondi
+    private static final double MIN_TIME_BETWEEN_PHEROMONES = MIN_DISTANCE_BETWEEN_PHEROMONES / ParameterAdapter.getAntSpeed(); // secondi
     private static final double FOOD_PHEROMONES_BOOSTER = 1.75;
 
-    private static final double DIFFUSION_RATE = 0.3;              // Fattore di diffusione per il campo
     private static final double[][] GAUSSIAN_KERNEL = {             // Kernel gaussiano 3x3 pre-calcolato
         {0.077847, 0.123317, 0.077847},
         {0.123317, 0.195346, 0.123317}, 
@@ -60,7 +56,7 @@ public class DensityFieldManager {
      */
     public void addPheromone(Coord pos, Pheromone.PheromoneType type, double  intensity) {
 
-        if (intensity <= Pheromone.MIN_INTENSITY) return;
+        if (intensity <= ParameterAdapter.getPheromoneMinIntensity()) return;
 
         int x = (int) (pos.x / CELL_SIZE);
         int y = (int) (pos.y / CELL_SIZE);
@@ -70,7 +66,7 @@ public class DensityFieldManager {
         if (isValidCell(x, y)) {
             double [][] targetField = getDensityField(type);
                 
-            targetField[x][y] = Math.min(MAX_INTENSITY, targetField[x][y] + intensity);
+            targetField[x][y] = Math.min(ParameterAdapter.getPheromoneMaxIntensity(), targetField[x][y] + intensity);
         }
 
         switch(type) {
@@ -107,7 +103,7 @@ public class DensityFieldManager {
 
         double lastMilestoneTime = ant.getStartTrackTime();
 
-        if (lastMilestoneTime <= 0) return Pheromone.INITIAL_INTENSITY; // Se non c'è milestone, usa intensità iniziale QUESTA RIGA VA CAMBIATA
+        if (lastMilestoneTime <= 0) return ParameterAdapter.getPheromoneInitialIntensity(); // Se non c'è milestone, usa intensità iniziale QUESTA RIGA VA CAMBIATA
 
         double timeSinceLastMilestone = System.nanoTime() - lastMilestoneTime;
 
@@ -119,7 +115,7 @@ public class DensityFieldManager {
 
         //System.out.printf("Ant %d pheromone intensity: %.2f (time: %.2f)\n", ant.getSerialNumber(), Pheromone.INITIAL_INTENSITY * (1 - normalizedTime), timeSinceLastMilestone);
 
-        return Math.max(Pheromone.MIN_INTENSITY, Pheromone.INITIAL_INTENSITY * (1 - normalizedTime));
+        return Math.max(ParameterAdapter.getPheromoneMinIntensity(), ParameterAdapter.getPheromoneInitialIntensity() * (1 - normalizedTime));
 
         /*
 
@@ -194,21 +190,21 @@ public class DensityFieldManager {
      * Aggiorna campo con decay
      */
     private void updateDensityField(double [][] field, double deltaTime) {
-        
-        double frameDecay = Math.pow(Pheromone.EVAPORATION_RATE, deltaTime);
+
+        double frameDecay = Math.pow(ParameterAdapter.getPheromoneEvaporationRate(), deltaTime);
 
         // evaporazione
         IntStream.range(0, gridWidth).parallel().forEach(x -> {
             for (int y = 0; y < gridHeight; y++) {
                 
                 // Non processare celle sotto soglia
-                if (field[x][y] < MIN_INTENSITY) continue;
-                
+                if (field[x][y] < ParameterAdapter.getPheromoneMinIntensity()) continue;
+
                 // Applica decay
                 field[x][y] *= frameDecay;
 
                 // Pulisci sotto soglia
-                if (field[x][y] < MIN_INTENSITY) field[x][y] = 0;
+                if (field[x][y] < ParameterAdapter.getPheromoneMinIntensity()) field[x][y] = 0;
             }
         });
 
@@ -225,7 +221,7 @@ public class DensityFieldManager {
         // Calcola intensità diffusione basata su deltaTime
         // Più deltaTime = più diffusione per mantenere consistenza temporale
 
-        double diffusion = DIFFUSION_RATE * deltaTime;
+        double diffusion = ParameterAdapter.getDiffusionRate() * deltaTime;
         
         // Array temporaneo per evitare race conditions durante il calcolo
         // Non possiamo modificare 'field' mentre lo leggiamo
@@ -236,7 +232,7 @@ public class DensityFieldManager {
             for (int y = 0; y < gridHeight; y++) {
                 
                 // Skip celle vuote per ottimizzazione - non calcolare diffusione su zero
-                if (field[x][y] < MIN_INTENSITY) {
+                if (field[x][y] < ParameterAdapter.getPheromoneMinIntensity()) {
                     tempField[x][y] = 0; // Assicurati che sia zero
                     continue;
                 }
@@ -280,7 +276,7 @@ public class DensityFieldManager {
                 
                 // Clamp per sicurezza numerica - previene valori negativi o troppo alti
                 if (tempField[x][y] < 0) tempField[x][y] = 0;
-                if (tempField[x][y] > MAX_INTENSITY) tempField[x][y] = MAX_INTENSITY;
+                if (tempField[x][y] > ParameterAdapter.getPheromoneMaxIntensity()) tempField[x][y] = ParameterAdapter.getPheromoneMaxIntensity();
             }
         }
         
@@ -336,7 +332,7 @@ public class DensityFieldManager {
      */
     public Coord getPheromoneGradient(Coord position, Pheromone.PheromoneType type) {
         
-        int delta = Ant.ANT_FEEL_RADIUS;
+        int delta = ParameterAdapter.getAntFeelRadius();
 
         int x = (int) (position.x / CELL_SIZE);
         int y = (int) (position.y / CELL_SIZE);
@@ -395,7 +391,7 @@ public class DensityFieldManager {
         int count = 0;
         for (int x = 0; x < gridWidth; x++) {
             for (int y = 0; y < gridHeight; y++) {
-                if (foodDensity[x][y] > MIN_INTENSITY || homeDensity[x][y] > MIN_INTENSITY) {
+                if (foodDensity[x][y] > ParameterAdapter.getPheromoneMinIntensity() || homeDensity[x][y] > ParameterAdapter.getPheromoneMinIntensity()) {
                     count++;
                 }
             }

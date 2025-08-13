@@ -1,11 +1,9 @@
 package com.example.model;
 
+import com.example.config.ParameterAdapter;
+
 import javafx.scene.paint.Color;
 
-/**
- * Classe Pheromone semplificata
- * La logica di gestione è stata spostata in DensityFieldManager per performance
- */
 public class Pheromone {
     
     public enum PheromoneType {
@@ -19,12 +17,7 @@ public class Pheromone {
     
     // Costanti di configurazione (mantenute uguali)
     public static final int PHEROMONE_SIZE = 2;                         // Dimensione del feromone in pixel
-    public static final double EVAPORATION_RATE = 0.85;                 // 15% evaporazione al secondo
-    public static final double MAX_INTENSITY = 3;                     // Intensità massima
-    public static final double MIN_INTENSITY = 0.05;                    // Intensità minima prima della rimozione
-    public static final double INITIAL_INTENSITY = 1;                // Intensità iniziale
-    public static final double MAX_PHEROMONE_TRAIL_LENGTH = 700;       // Lunghezza massima di rilascio di feromoni in pixel  
-    public static final double MAX_PHEROMONE_TRAIL_DURATION = MAX_PHEROMONE_TRAIL_LENGTH / Ant.ANT_SPEED;  // Durata massima di rilascio di feromoni in secondi
+    public static final double MAX_PHEROMONE_TRAIL_DURATION = ParameterAdapter.getMaxPheromoneTrailLength() / ParameterAdapter.getAntSpeed();  // Durata massima di rilascio di feromoni in secondi
 
     public static Color getColorForType(PheromoneType type) {
         switch(type) {
@@ -49,5 +42,29 @@ public class Pheromone {
             baseColor.getBlue(),
             alpha
         );
+    }
+
+    public static double getEvaporationRate() {
+        return ParameterAdapter.getPheromoneEvaporationRate();
+    }
+
+    public static double getMaxIntensity() {
+        return ParameterAdapter.getPheromoneMaxIntensity();
+    }
+
+    public static double getMinIntensity() {
+        return ParameterAdapter.getPheromoneMinIntensity();
+    }
+
+    public static double getInitialIntensity() {
+        return ParameterAdapter.getPheromoneInitialIntensity();
+    }
+
+    public static double getMaxPheromoneTrailLength() {
+        return ParameterAdapter.getMaxPheromoneTrailLength();
+    }
+
+    public static double getMaxPheromoneTrailDuration() {
+        return ParameterAdapter.getMaxPheromoneTrailDuration();
     }
 }

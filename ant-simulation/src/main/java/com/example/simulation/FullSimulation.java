@@ -1,16 +1,19 @@
 package com.example.simulation;
 
+import com.example.config.ParameterAdapter;
 import com.example.model.Ant;
 
 public class FullSimulation extends Simulation {
-    
-    private static final int NEST_NUMBER = 1;
-    private static final int ANT_NUMBER = 300;
-    private static final int CLUMP_SIZE = 500;                       // Numero di pezzi di cibo in un ammasso
-    private static final int CLUMP_NUMBER = 10;                      // Numero di ammassi di cibo
 
     public FullSimulation(double mapWidth, double mapHeight) {
-        super(NEST_NUMBER, ANT_NUMBER, CLUMP_SIZE, CLUMP_NUMBER, mapWidth, mapHeight);
+        super(
+            ParameterAdapter.getNestNumber(),
+            ParameterAdapter.getAntNumber(), 
+            ParameterAdapter.getClumpSize(), 
+            ParameterAdapter.getClumpNumber(), 
+            mapWidth, 
+            mapHeight
+        );
         initDensityManager();
         this.ANTS_BEHAVIOUR = Ant.ANT_BEHAVIOUR.ALL_PHEROMONES;      // Comportamento predefinito per la simulazione
     }

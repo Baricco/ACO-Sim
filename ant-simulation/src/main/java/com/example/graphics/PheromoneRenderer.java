@@ -2,6 +2,7 @@ package com.example.graphics;
 
 import java.util.Random;
 
+import com.example.config.ParameterAdapter;
 import com.example.managers.DensityFieldManager;
 import com.example.model.Pheromone;
 
@@ -48,13 +49,13 @@ public class PheromoneRenderer {
 
                 // Food dots
                 double foodIntensity = foodField[x][y];
-                if (foodIntensity > Pheromone.MIN_INTENSITY) {
+                if (foodIntensity > ParameterAdapter.getPheromoneMinIntensity()) {
                     renderDot(canvas, x * cellSize, y * cellSize, foodIntensity, Pheromone.PheromoneType.FOOD_TRAIL);
                 }
                 
                 // Home dots
                 double homeIntensity = homeField[x][y];
-                if (homeIntensity > Pheromone.MIN_INTENSITY) {
+                if (homeIntensity > ParameterAdapter.getPheromoneMinIntensity()) {
                     renderDot(canvas, x * cellSize, y * cellSize, homeIntensity, Pheromone.PheromoneType.HOME_TRAIL);
                 }
             }
@@ -63,7 +64,7 @@ public class PheromoneRenderer {
     
     private void renderDot(GameCanvas canvas, double x, double y, double intensity, Pheromone.PheromoneType type) {
 
-        double intensityFactor = (intensity / Pheromone.MAX_INTENSITY);
+        double intensityFactor = (intensity / ParameterAdapter.getPheromoneMaxIntensity());
 
         // Raggio basato su intensità
         double radius = Pheromone.PHEROMONE_SIZE * intensityFactor;

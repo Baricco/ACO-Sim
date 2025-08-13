@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane fitToWidth="true" prefWidth="250.0" style="-fx-background: rgba(51, 51, 51, 0.9);" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.controllers.SidePanelController">
+   <content>
+      <VBox spacing="5.0" style="-fx-padding: 10;">
+         <children>
+            <!-- Sezione Ant Stats (spostata da simulation.fxml) -->
+            <Label alignment="CENTER" style="-fx-font-weight: bold; -fx-text-fill: white; -fx-font-size: 14px;" text="Ant Stats" />
+            <Separator />
+            
+            <Label alignment="CENTER" style="-fx-text-fill: white; -fx-font-size: 10px;" text="Serial Number:" />
+            <Label fx:id="serialNumberLabel" alignment="CENTER" style="-fx-text-fill: white; -fx-font-size: 10px;" text="0" />
+            
+            <Label alignment="CENTER" style="-fx-text-fill: white; -fx-font-size: 10px;" text="Start Time:" />
+            <Label fx:id="startTimeLabel" alignment="CENTER" style="-fx-text-fill: white; -fx-font-size: 10px;" text="0" />
+            
+            <Label alignment="CENTER" style="-fx-text-fill: white; -fx-font-size: 10px;" text="Last Food DT:" />
+            <Label fx:id="LFDTLabel" alignment="CENTER" style="-fx-text-fill: white; -fx-font-size: 10px;" text="0" />
+            
+            <Label alignment="CENTER" style="-fx-text-fill: white; -fx-font-size: 10px;" text="Last Nest DT:" />
+            <Label fx:id="LNDTLabel" alignment="CENTER" style="-fx-text-fill: white; -fx-font-size: 10px;" text="0" />
+            
+            <Label alignment="CENTER" style="-fx-text-fill: white; -fx-font-size: 10px;" text="Last Trip Time:" />
+            <Label fx:id="LTTLabel" alignment="CENTER" style="-fx-text-fill: white; -fx-font-size: 10px;" text="0" />
+            
+            <Label alignment="CENTER" style="-fx-text-fill: white; -fx-font-size: 10px;" text="Mean Trip Time:" />
+            <Label fx:id="MTTLabel" alignment="CENTER" style="-fx-text-fill: white; -fx-font-size: 10px;" text="0" />
+            
+            <!-- Pulsanti navigazione -->
+            <VBox alignment="CENTER" spacing="5.0">
+               <children>
+                  <Button fx:id="prevAntButton" onAction="#selectPreviousAnt" style="-fx-font-size: 12px; -fx-background-color: #607D8B; -fx-text-fill: white;" text="◀ Previous Ant" />
+                  <Button fx:id="nextAntButton" onAction="#selectNextAnt" style="-fx-font-size: 12px; -fx-background-color: #607D8B; -fx-text-fill: white;" text="Next Ant ▶" />
+               </children>
+            </VBox>
+            
+            <Separator />
+            
+            <!-- Sezione Real-time Parameters -->
+            <Label alignment="CENTER" style="-fx-font-weight: bold; -fx-text-fill: white; -fx-font-size: 14px;" text="Real-time Parameters" />
+            <Separator />
+            
+            <!-- Pheromone Parameters -->
+            <Label style="-fx-font-weight: bold; -fx-text-fill: white; -fx-font-size: 12px;" text="Pheromone" />
+            
+            <Label style="-fx-text-fill: white; -fx-font-size: 10px;" text="Evaporation Rate:" />
+            <Slider fx:id="evaporationRateSlider" max="0.99" min="0.1" value="0.85" />
+            <Label fx:id="evaporationRateValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" text="0.85" />
+            
+            <Label style="-fx-text-fill: white; -fx-font-size: 10px;" text="Max Intensity:" />
+            <Slider fx:id="maxIntensitySlider" max="10.0" min="1.0" value="3.0" />
+            <Label fx:id="maxIntensityValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" text="3.0" />
+            
+            <Label style="-fx-text-fill: white; -fx-font-size: 10px;" text="Min Intensity:" />
+            <Slider fx:id="minIntensitySlider" max="0.5" min="0.01" value="0.05" />
+            <Label fx:id="minIntensityValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" text="0.05" />
+            
+            <Label style="-fx-text-fill: white; -fx-font-size: 10px;" text="Initial Intensity:" />
+            <Slider fx:id="initialIntensitySlider" max="5.0" min="0.1" value="1.0" />
+            <Label fx:id="initialIntensityValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" text="1.0" />
+            
+            <Label style="-fx-text-fill: white; -fx-font-size: 10px;" text="Max Trail Length:" />
+            <Slider fx:id="maxTrailLengthSlider" max="1500.0" min="100.0" value="700.0" />
+            <Label fx:id="maxTrailLengthValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" text="700" />
+            
+            <Separator />
+            
+            <!-- Ant Parameters -->
+            <Label style="-fx-font-weight: bold; -fx-text-fill: white; -fx-font-size: 12px;" text="Ant Behavior" />
+            
+            <Label style="-fx-text-fill: white; -fx-font-size: 10px;" text="Sight Radius:" />
+            <Slider fx:id="antSightRadiusSlider" max="150.0" min="20.0" value="70.0" />
+            <Label fx:id="antSightRadiusValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" text="70" />
+            
+            <Label style="-fx-text-fill: white; -fx-font-size: 10px;" text="Feel Radius:" />
+            <Slider fx:id="antFeelRadiusSlider" max="100.0" min="10.0" value="50.0" />
+            <Label fx:id="antFeelRadiusValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" text="50" />
+            
+            <Label style="-fx-text-fill: white; -fx-font-size: 10px;" text="Speed:" />
+            <Slider fx:id="antSpeedSlider" max="500.0" min="50.0" value="250.0" />
+            <Label fx:id="antSpeedValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" text="250" />
+            
+            <Label style="-fx-text-fill: white; -fx-font-size: 10px;" text="Exploration Rate:" />
+            <Slider fx:id="explorationRateSlider" max="1.0" min="0.0" value="0.3" />
+            <Label fx:id="explorationRateValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" text="0.3" />
+            
+            <Separator />
+            
+            <!-- Density Field Parameters -->
+            <Label style="-fx-font-weight: bold; -fx-text-fill: white; -fx-font-size: 12px;" text="Field Diffusion" />
+            
+            <Label style="-fx-text-fill: white; -fx-font-size: 10px;" text="Diffusion Rate:" />
+            <Slider fx:id="diffusionRateSlider" max="0.8" min="0.0" value="0.3" />
+            <Label fx:id="diffusionRateValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" text="0.3" />
+            
+            <Separator />
+            
+            <!-- Reset Button -->
+            <Button fx:id="resetButton" onAction="#resetToDefaults" style="-fx-background-color: #607D8B; -fx-text-fill: white;" text="Reset to Default" />
+         </children>
+      </VBox>
+   </content>
+</ScrollPane>
