@@ -13,6 +13,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 
 /**
  * Controller per il dialog delle opzioni di simulazione
@@ -59,7 +60,7 @@ public class OptionsController implements Initializable {
             SimulationParameters.Constraints.NEST_NUMBER_MIN,
             SimulationParameters.Constraints.NEST_NUMBER_MAX,
             params.getNestNumber(),
-            (SimulationParameters.Constraints.NEST_NUMBER_MAX - SimulationParameters.Constraints.NEST_NUMBER_MIN) / 4.0);
+            (int)(SimulationParameters.Constraints.NEST_NUMBER_MAX - SimulationParameters.Constraints.NEST_NUMBER_MIN) / 4.0);
             
         configureSlider(antNumberSlider,
             SimulationParameters.Constraints.ANT_NUMBER_MIN,
@@ -79,6 +80,19 @@ public class OptionsController implements Initializable {
             params.getClumpNumber(),
             (SimulationParameters.Constraints.CLUMP_NUMBER_MAX - SimulationParameters.Constraints.CLUMP_NUMBER_MIN) / 4.0);
 
+
+        // Converti le label degli slider ad int, in modo da non mostrare numeri decimali
+        StringConverter<Double> intConverter = new StringConverter<Double>() {
+            @Override
+            public String toString(Double n) { return String.valueOf(n.intValue()); }
+            @Override
+            public Double fromString(String s) { return Double.valueOf(s); }
+        };
+
+        nestNumberSlider.setLabelFormatter(intConverter);
+        antNumberSlider.setLabelFormatter(intConverter);
+        clumpSizeSlider.setLabelFormatter(intConverter);
+        clumpNumberSlider.setLabelFormatter(intConverter);
 
         // Aggiungi listener per aggiornare parametri e label
         nestNumberSlider.valueProperty().addListener((obs, oldVal, newVal) -> {

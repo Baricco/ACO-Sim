@@ -191,7 +191,9 @@ public class DensityFieldManager {
      */
     private void updateDensityField(double [][] field, double deltaTime) {
 
-        double frameDecay = Math.pow(ParameterAdapter.getPheromoneEvaporationRate(), deltaTime);
+        double inverseEvaporationRate = 1.0 - ParameterAdapter.getPheromoneEvaporationRate();
+
+        double frameDecay = Math.pow(inverseEvaporationRate, deltaTime);
 
         // evaporazione
         IntStream.range(0, gridWidth).parallel().forEach(x -> {

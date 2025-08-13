@@ -124,14 +124,22 @@ public class Simulation {
 
         System.out.println(new Coord(mapWidth/2, mapHeight/2));
 
-
         for (int i = 0; i < NESTS_NUMBER; i++) {
-            nests.add(new Nest(ANTS_NUMBER, new Coord(mapWidth/2, mapHeight), this));
-
+            nests.add(new Nest(ANTS_NUMBER, calcNestCoordinates(i), this));
         }
+
         for(int i = 0; i < FOOD_CLUMP_NUMBER; i++){
             foodClumps.add(new FoodClump(FOOD_CLUMP_SIZE, mapWidth, mapHeight, this));
         }
+    }
+
+    private Coord calcNestCoordinates(int index) {
+        double spacing = mapWidth / (NESTS_NUMBER + 1);
+
+
+        int pos = index / 2;
+        double offset = pos == 0 ? 0 : ((pos + 1) / 2) * spacing * (pos % 2 == 1 ? 1 : -1);
+        return new Coord(mapWidth / 2.0 + offset, index % 2 == 0 ? mapHeight : 0);
     }
 
     public List<Nest> getNests() { 

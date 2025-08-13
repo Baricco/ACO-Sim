@@ -14,58 +14,64 @@ public class SimulationParameters {
     
     private static SimulationParameters instance;
     private List<ParameterChangeListener> listeners = new ArrayList<>();
+
+
+        // ==================== DEFAULT VALUES ====================
+
+        // Pheromone defaults
+        public static final double DEFAULT_EVAPORATION_RATE = 0.15;
+        public static final double DEFAULT_MAX_INTENSITY = 3.0;
+        public static final double DEFAULT_MIN_INTENSITY = 0.05;
+        public static final double DEFAULT_INITIAL_INTENSITY = 1.0;
+        public static final double DEFAULT_MAX_PHEROMONE_TRAIL_LENGTH = 700.0;
+
+        // Ant defaults
+        public static final int DEFAULT_ANT_SIGHT_RADIUS = 70;
+        public static final int DEFAULT_ANT_FEEL_RADIUS = 40;
+        public static final int DEFAULT_ANT_SENSOR_RADIUS = 7;
+        public static final double DEFAULT_ANT_SENSOR_ANGLE = Math.PI / 3;          // Angolo di 60 gradi per i sensori
+        public static final double DEFAULT_ANT_SPEED = 250.0;
+        public static final double DEFAULT_EXPLORATION_RATE = 0.5;
+        
+
+        // Density Field defaults
+        public static final double DEFAULT_DIFFUSION_RATE = 0.3;
+
+        // Setup defaults
+        public static final int DEFAULT_NEST_NUMBER = 1;
+        public static final int DEFAULT_ANT_NUMBER = 300;
+        public static final int DEFAULT_CLUMP_SIZE = 500;
+        public static final int DEFAULT_CLUMP_NUMBER = 10;
+
     
     // ==================== PARAMETRI REAL-TIME ====================
     
     // Pheromone Settings
-    private double evaporationRate = 0.85;
-    private double maxIntensity = 3.0;
-    private double minIntensity = 0.05;
-    private double initialIntensity = 1.0;
-    private double maxPheromoneTrailLength = 700.0;
-    
-    // Ant Settings  
-    private int antSightRadius = 70;
-    private int antFeelRadius = 50;
-    private double antSpeed = 250.0;
-    private double explorationRate = 0.3;
-    private int antSensorRadius = 10;              // Radius for pheromone sensing
-    
+    private double evaporationRate = DEFAULT_EVAPORATION_RATE;
+    private double maxIntensity = DEFAULT_MAX_INTENSITY;
+    private double minIntensity = DEFAULT_MIN_INTENSITY;
+    private double initialIntensity = DEFAULT_INITIAL_INTENSITY;
+    private double maxPheromoneTrailLength = DEFAULT_MAX_PHEROMONE_TRAIL_LENGTH;
+
+    // Ant Settings
+    private int antSightRadius = DEFAULT_ANT_SIGHT_RADIUS;
+    private int antFeelRadius = DEFAULT_ANT_FEEL_RADIUS;
+    private double antSpeed = DEFAULT_ANT_SPEED;
+    private double explorationRate = DEFAULT_EXPLORATION_RATE;
+    private int antSensorRadius = DEFAULT_ANT_SENSOR_RADIUS;
+    private double antSensorAngle = DEFAULT_ANT_SENSOR_ANGLE;
+
     // Density Field Settings
-    private double diffusionRate = 0.3;
-    
+    private double diffusionRate = DEFAULT_DIFFUSION_RATE;
+
     // ==================== PARAMETRI SETUP ====================
     
     // Simulation Setup Settings
-    private int nestNumber = 1;
-    private int antNumber = 300;
-    private int clumpSize = 500;
-    private int clumpNumber = 10;
+    private int nestNumber = DEFAULT_NEST_NUMBER;
+    private int antNumber = DEFAULT_ANT_NUMBER;
+    private int clumpSize = DEFAULT_CLUMP_SIZE;
+    private int clumpNumber = DEFAULT_CLUMP_NUMBER;
 
-
-    // ==================== DEFAULT VALUES ====================
-
-    // Pheromone defaults
-    public static final double DEFAULT_EVAPORATION_RATE = 0.85;
-    public static final double DEFAULT_MAX_INTENSITY = 3.0;
-    public static final double DEFAULT_MIN_INTENSITY = 0.05;
-    public static final double DEFAULT_INITIAL_INTENSITY = 1.0;
-    public static final double DEFAULT_MAX_PHEROMONE_TRAIL_LENGTH = 700.0;
-
-    // Ant defaults
-    public static final int DEFAULT_ANT_SIGHT_RADIUS = 70;
-    public static final int DEFAULT_ANT_FEEL_RADIUS = 50;
-    public static final double DEFAULT_ANT_SPEED = 250.0;
-    public static final double DEFAULT_EXPLORATION_RATE = 0.5;
-
-    // Density Field defaults
-    public static final double DEFAULT_DIFFUSION_RATE = 0.3;
-
-    // Setup defaults
-    public static final int DEFAULT_NEST_NUMBER = 1;
-    public static final int DEFAULT_ANT_NUMBER = 300;
-    public static final int DEFAULT_CLUMP_SIZE = 500;
-    public static final int DEFAULT_CLUMP_NUMBER = 10;
     
     // ==================== CONSTRAINTS ====================
     
@@ -212,7 +218,10 @@ public class SimulationParameters {
         antSensorRadius = (int) clamp(value, Constraints.ANT_SENSOR_RADIUS_MIN, Constraints.ANT_SENSOR_RADIUS_MAX);
         notifyListeners("antSensorRadius", oldValue, antSensorRadius);
     }
-    
+
+    // Per gli angoli dei sensori niente setter, perchè non sono modificabili in real-time
+    public double getAntSensorAngle() { return antSensorAngle; }
+
     public double getAntSpeed() { return antSpeed; }
     public void setAntSpeed(double value) {
         double oldValue = antSpeed;

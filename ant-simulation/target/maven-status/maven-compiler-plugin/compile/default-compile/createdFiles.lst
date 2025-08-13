@@ -33,5 +33,6 @@ com\example\controllers\SimulationController.class
 com\example\model\Food.class
 com\example\model\GameObject.class
 com\example\model\Pheromone$PheromoneType.class
+com\example\controllers\OptionsController$1.class
 com\example\managers\SimulationManager.class
 com\example\model\Ant.class

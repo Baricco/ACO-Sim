@@ -39,22 +39,22 @@
                <children>
                   <!-- Nests -->
                   <Label style="-fx-text-fill: white;" text="Nests:" />
-                  <Slider fx:id="nestNumberSlider" majorTickUnit="1.0" showTickLabels="true" showTickMarks="true" GridPane.columnIndex="1" />
+                  <Slider fx:id="nestNumberSlider" snapToTicks="true" majorTickUnit="1" minorTickCount="0" showTickLabels="true" showTickMarks="true" GridPane.columnIndex="1" />
                   <Label fx:id="nestNumberValue" alignment="CENTER_RIGHT" prefWidth="50.0" style="-fx-text-fill: white;" text="1" GridPane.columnIndex="2" />
                   
                   <!-- Ants -->
                   <Label style="-fx-text-fill: white;" text="Ants:" GridPane.rowIndex="1" />
-                  <Slider fx:id="antNumberSlider" majorTickUnit="100.0" showTickLabels="true" showTickMarks="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Slider fx:id="antNumberSlider" majorTickUnit="100" minorTickCount="0" snapToTicks="true" showTickLabels="true" showTickMarks="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <Label fx:id="antNumberValue" alignment="CENTER_RIGHT" prefWidth="50.0" style="-fx-text-fill: white;" text="300" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                   
                   <!-- Food per Clump -->
                   <Label style="-fx-text-fill: white;" text="Food per Clump:" GridPane.rowIndex="2" />
-                  <Slider fx:id="clumpSizeSlider" majorTickUnit="250.0" showTickLabels="true" showTickMarks="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <Slider fx:id="clumpSizeSlider" majorTickUnit="250" minorTickCount="0" snapToTicks="true" showTickLabels="true" showTickMarks="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <Label fx:id="clumpSizeValue" alignment="CENTER_RIGHT" prefWidth="50.0" style="-fx-text-fill: white;" text="500" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                   
                   <!-- Food Clumps -->
                   <Label style="-fx-text-fill: white;" text="Food Clumps:" GridPane.rowIndex="3" />
-                  <Slider fx:id="clumpNumberSlider" majorTickUnit="5.0" showTickLabels="true" showTickMarks="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <Slider fx:id="clumpNumberSlider" majorTickUnit="5" minorTickCount="0" snapToTicks="true" showTickLabels="true" showTickMarks="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                   <Label fx:id="clumpNumberValue" alignment="CENTER_RIGHT" prefWidth="50.0" style="-fx-text-fill: white;" text="10" GridPane.columnIndex="2" GridPane.rowIndex="3" />
                </children>
             </GridPane>

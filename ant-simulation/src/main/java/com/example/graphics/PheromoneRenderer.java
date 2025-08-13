@@ -3,6 +3,7 @@ package com.example.graphics;
 import java.util.Random;
 
 import com.example.config.ParameterAdapter;
+import com.example.config.SimulationParameters;
 import com.example.managers.DensityFieldManager;
 import com.example.model.Pheromone;
 
@@ -14,7 +15,7 @@ public class PheromoneRenderer {
 
     private static final double RANDOM_OFFSET = 0.75;           // Per jitter casuale
     private static final double SAMPLING_FACTOR = 0.5;          // Riduce il numero di punti renderizzati
-    private static final double ALPHA_FACTOR = 0.50;            // Fattore di opacità per i feromoni
+    private static final double ALPHA_FACTOR = 0.75;            // Fattore di opacità per i feromoni
 
     private boolean renderingEnabled = true;
     
@@ -64,10 +65,10 @@ public class PheromoneRenderer {
     
     private void renderDot(GameCanvas canvas, double x, double y, double intensity, Pheromone.PheromoneType type) {
 
-        double intensityFactor = (intensity / ParameterAdapter.getPheromoneMaxIntensity());
+        double intensityFactor = (intensity / SimulationParameters.getInstance().getMaxIntensity());
 
         // Raggio basato su intensità
-        double radius = Pheromone.PHEROMONE_SIZE * intensityFactor;
+        double radius = Math.max(Pheromone.PHEROMONE_SIZE * intensityFactor, 1);
 
         Color color = Pheromone.getColorWithAlpha(type, intensityFactor * ALPHA_FACTOR);
 

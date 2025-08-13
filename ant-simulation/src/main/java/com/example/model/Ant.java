@@ -3,6 +3,7 @@ package com.example.model;
 import java.util.Random;
 
 import com.example.config.ParameterAdapter;
+import com.example.config.SimulationParameters;
 import com.example.graphics.Coord;
 import com.example.graphics.GameCanvas;
 import com.example.managers.DensityFieldManager;
@@ -21,8 +22,6 @@ public class Ant extends GameObject {
     // Costanti
     public static final int ANT_SIZE = 20;
 
-
-    public static final double ANT_SENSOR_ANGLE = Math.PI / 4;          // Angolo di 45 gradi per i sensori
     public static final double TURN_AROUND_ANGLE_OFFSET = Math.PI / 4;  // Offset di 45 gradi nel turn around della formica
     public static final Color ANT_FEEL_COLOR = Color.rgb(255, 255, 0, 0.2); // Colore per il raggio di percezione
     public static final Color ANT_SENSOR_COLOR = Color.rgb(255, 0, 255, 0.2); // Colore per il raggio di sensori
@@ -81,9 +80,9 @@ public class Ant extends GameObject {
         this.lastPheromonePosition = null;
         
         // Inizializza i sensori
-        this.leftSensor = new Sensor(Ant.ANT_SENSOR_ANGLE);   // 30 gradi a sinistra
+        this.leftSensor = new Sensor(SimulationParameters.getInstance().getAntSensorAngle());   // 30 gradi a sinistra
         this.frontSensor = new Sensor(0);             // Direzione frontale
-        this.rightSensor = new Sensor(-Ant.ANT_SENSOR_ANGLE);  // 30 gradi a destra
+        this.rightSensor = new Sensor(-SimulationParameters.getInstance().getAntSensorAngle());  // 30 gradi a destra
     }
 
     public Ant(Coord position, double mapWidth, double mapHeight, Nest nest) {

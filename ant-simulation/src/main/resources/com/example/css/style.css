@@ -72,3 +72,47 @@
 .scrollBar:hover .scroll-bar:vertical {
     -fx-opacity: 1.0;
 }
+
+
+/* Slider elegante */
+.slider {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+}
+
+/* Track dello slider */
+.slider .track {
+    -fx-background-color: #555555;
+    -fx-background-radius: 4px;
+    -fx-pref-height: 6px;
+}
+
+/* Thumb dello slider */
+.slider .thumb {
+    -fx-background-color: #222222;
+    -fx-background-radius: 8px;
+    -fx-pref-width: 16px;
+    -fx-pref-height: 16px;
+}
+
+/* Thumb al hover */
+.slider .thumb:hover {
+    -fx-background-color: #333333;
+}
+
+/* Thumb premuto */
+.slider .thumb:pressed {
+    -fx-background-color: #444444;
+}
+
+/* Label bianche */
+.slider .axis .axis-label,
+.slider .tick-label {
+    -fx-text-fill: white;
+    -fx-font-size: 10px;
+}
+
+/* Tick marks */
+.slider .axis .axis-tick-mark {
+    -fx-stroke: #555555;
+}
