@@ -56,6 +56,14 @@ public class ParameterAdapter {
     public static double getExplorationRate() {
         return params.getExplorationRate();
     }
+
+    public static double getAntMemoryEMAAlpha() {
+        return params.getAntMemoryEMAAlpha();
+    }
+
+    public static double getAntPheromoneSensibility() {
+        return params.getAntPheromoneSensibility();
+    }
     
     // ==================== DENSITY FIELD PARAMETERS ====================
     

@@ -70,7 +70,7 @@ public class PheromoneRenderer {
         // Raggio basato su intensità
         double radius = Math.max(Pheromone.PHEROMONE_SIZE * intensityFactor, 1);
 
-        Color color = Pheromone.getColorWithAlpha(type, intensityFactor * ALPHA_FACTOR);
+        Color color = Pheromone.getColorWithAlpha(type, Math.min(intensityFactor, ALPHA_FACTOR));
 
         //System.out.println(intensity*ALPHA_FACTOR);
 

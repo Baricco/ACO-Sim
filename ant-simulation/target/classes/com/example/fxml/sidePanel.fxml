@@ -96,6 +96,10 @@
             <Slider fx:id="explorationRateSlider" />
             <Label fx:id="explorationRateValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" />
             
+            <Label style="-fx-text-fill: white; -fx-font-size: 10px;" text="Pheromone Sensibility:" />
+            <Slider fx:id="antPheromoneSensibilitySlider" />
+            <Label fx:id="antPheromoneSensibilityValue" alignment="CENTER_RIGHT" style="-fx-text-fill: white; -fx-font-size: 10px;" />
+
             <Separator />
             
             <!-- Density Field Parameters -->

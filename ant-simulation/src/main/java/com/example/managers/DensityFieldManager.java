@@ -1,5 +1,6 @@
 package com.example.managers;
 
+import java.lang.reflect.Parameter;
 import java.util.Random;
 import java.util.stream.IntStream;
 
@@ -23,7 +24,7 @@ public class DensityFieldManager {
     private static final double MIN_DISTANCE_BETWEEN_PHEROMONES = Pheromone.PHEROMONE_SIZE; // Distanza minima tra i feromoni
     private static final double JITTER_RADIUS = MIN_DISTANCE_BETWEEN_PHEROMONES * 0.15;
     private static final double MIN_TIME_BETWEEN_PHEROMONES = MIN_DISTANCE_BETWEEN_PHEROMONES / ParameterAdapter.getAntSpeed(); // secondi
-    private static final double FOOD_PHEROMONES_BOOSTER = 1.75;
+    private static final double FOOD_PHEROMONES_BOOSTER = 1.5;
 
     private static final double[][] GAUSSIAN_KERNEL = {             // Kernel gaussiano 3x3 pre-calcolato
         {0.077847, 0.123317, 0.077847},
@@ -64,18 +65,58 @@ public class DensityFieldManager {
         if (type == Pheromone.PheromoneType.FOOD_TRAIL) intensity *= FOOD_PHEROMONES_BOOSTER;
 
         if (isValidCell(x, y)) {
+
+            // Ottieni il campo di densità corrispondente al tipo
             double [][] targetField = getDensityField(type);
                 
-            targetField[x][y] = Math.min(ParameterAdapter.getPheromoneMaxIntensity(), targetField[x][y] + intensity);
-        }
+        
+            
+            // Calcola il fattore di saturazione
+            // Se tante formiche passano per quella strada, le nuove formiche non rilasciano altro feromone (Lasius Niger)
+            double adjustedIntensity = calculateWeberFechnerSuppression(targetField[x][y], intensity);
+            
 
-        switch(type) {
-            case FOOD_TRAIL:
-                totalFoodIntensity += intensity;
-                break;
-            case HOME_TRAIL:
-                totalHomeIntensity += intensity;
-                break;
+            targetField[x][y] = Math.min(ParameterAdapter.getPheromoneMaxIntensity(), targetField[x][y] + adjustedIntensity);
+         
+            switch(type) {
+                case FOOD_TRAIL:
+                    totalFoodIntensity += adjustedIntensity;
+                    break;
+                case HOME_TRAIL:
+                    totalHomeIntensity += adjustedIntensity;
+                    break;
+            }
+        }
+    }
+
+    // Saturazione dei feromoni basata sulla legge di Weber-Fechner (Ant Navigation Model based on Webers Law)
+    public double calculateWeberFechnerSuppression(double currentIntensity, double newIntensity) {
+        // Parametri dal paper
+        double C_STAR_MIN = ParameterAdapter.getPheromoneMinIntensity();
+        double C_STAR_MAX = ParameterAdapter.getPheromoneMaxIntensity();
+        double WEBER_FRACTION = 0.05; // 5% per stimoli chimici
+        
+        // Calcola soglia differenziale di Weber
+        double justNoticeableDifference = currentIntensity * ParameterAdapter.getAntPheromoneSensibility();
+        
+        // Solo deposita se il nuovo feromone è percettibilmente diverso
+        if (newIntensity < justNoticeableDifference) {
+            return 0.0; // Sotto soglia Weber
+        }
+        
+        // Calcola concentrazione effettiva
+        double totalIntensity = currentIntensity + newIntensity;
+        
+        // Applica saturazione secondo Fechner (logaritmica)
+        if (totalIntensity <= C_STAR_MIN) {
+            return 0.0;
+        } else if (totalIntensity >= C_STAR_MAX) {
+            // Usa formula logaritmica di Fechner per saturazione graduale
+            double logRatio = Math.log(totalIntensity / C_STAR_MAX);
+            double fechnerSuppression = Math.exp(-logRatio);
+            return newIntensity * fechnerSuppression;
+        } else {
+            return newIntensity; // Range normale
         }
     }
 

@@ -65,6 +65,9 @@ public class Ant extends GameObject {
     // Sensori per i feromoni
     private Sensor leftSensor, frontSensor, rightSensor;
 
+    // Memoria della formica
+    private double pheromoneMovingAverage = 0;
+
     public Ant(double mapWidth, double mapHeight, Nest nest) {
         super(GameObjType.ANT, GameObject.getNewSerialNumber(), ANT_SIZE, GameObject.generateRandomPosition(mapWidth, mapHeight, ANT_SIZE));
         this.direction = generateRandomVector();
@@ -405,7 +408,7 @@ public class Ant extends GameObject {
         }
     }
 
-    private void turnAround() {
+    private Coord getTurnAroundAngle() {
         // Calcola l'angolo di base (180 gradi) per invertire la direzione
         double baseAngle = Math.PI;
 
@@ -413,9 +416,14 @@ public class Ant extends GameObject {
         double randomOffset = (RANDOM.nextDouble() - 0.5) * Ant.TURN_AROUND_ANGLE_OFFSET;
 
         double newAngle = Math.atan2(direction.y, direction.x) + baseAngle + randomOffset;
-        
+
+        return new Coord(Math.cos(newAngle), Math.sin(newAngle));
+
+    }
+
+    private void turnAround() {
         // Applica nuova direzione
-        this.direction = new Coord(Math.cos(newAngle), Math.sin(newAngle));
+        this.direction = getTurnAroundAngle();
     }
 
     // Metodi per il cibo
@@ -453,24 +461,36 @@ public class Ant extends GameObject {
 
         double maxIntensity = Math.max(leftIntensity, Math.max(frontIntensity, rightIntensity));
 
+
+        pheromoneMovingAverage = (1 - ParameterAdapter.getAntMemoryEMAAlpha()) * pheromoneMovingAverage + ParameterAdapter.getAntMemoryEMAAlpha() * maxIntensity;
+
+
         if (maxIntensity <= ParameterAdapter.getPheromoneMinIntensity()) {
-            // Se tutte le intensità sono molto basse, usa un vettore casuale
+
+            // Se tutte le intensità sono molto basse, torna indietro se l'ultima intensità era alta, se no vai a caso
+            if (pheromoneMovingAverage > ParameterAdapter.getPheromoneMinIntensity()) return getTurnAroundAngle();
+
             return handleRandomSteering();
         }
 
-        return selectDirection(leftIntensity, frontIntensity, rightIntensity);
+        // Se stiamo tornando a casa, non vogliamo esplorare
+        double explorationRate = ParameterAdapter.getExplorationRate();
+
+        if (pheromoneType == Pheromone.PheromoneType.HOME_TRAIL) explorationRate = 0;
+
+        return selectDirection(leftIntensity, frontIntensity, rightIntensity, explorationRate);
 
     }
 
-    private Coord selectDirection(double leftIntensity, double frontIntensity, double rightIntensity) {
+    private Coord selectDirection(double leftIntensity, double frontIntensity, double rightIntensity, double explorationRate) {
 
         double totalIntensity = leftIntensity + frontIntensity + rightIntensity;
 
 
         // Calcola la probabilità per ogni direzione come intensità relativa + tasso di esplorazione
-        double leftProbability = leftIntensity / totalIntensity + getExplorationRate() / 3;
-        double frontProbability = frontIntensity / totalIntensity + getExplorationRate() / 3;
-        double rightProbability = rightIntensity / totalIntensity + getExplorationRate() / 3;
+        double leftProbability = leftIntensity / totalIntensity + explorationRate / 3;
+        double frontProbability = frontIntensity / totalIntensity + explorationRate / 3;
+        double rightProbability = rightIntensity / totalIntensity + explorationRate / 3;
 
 
         // normalizzazione delle probabilità

@@ -20,7 +20,7 @@ public class SimulationParameters {
 
         // Pheromone defaults
         public static final double DEFAULT_EVAPORATION_RATE = 0.15;
-        public static final double DEFAULT_MAX_INTENSITY = 3.0;
+        public static final double DEFAULT_MAX_INTENSITY = 5.0;
         public static final double DEFAULT_MIN_INTENSITY = 0.05;
         public static final double DEFAULT_INITIAL_INTENSITY = 1.0;
         public static final double DEFAULT_MAX_PHEROMONE_TRAIL_LENGTH = 700.0;
@@ -32,14 +32,16 @@ public class SimulationParameters {
         public static final double DEFAULT_ANT_SENSOR_ANGLE = Math.PI / 3;          // Angolo di 60 gradi per i sensori
         public static final double DEFAULT_ANT_SPEED = 250.0;
         public static final double DEFAULT_EXPLORATION_RATE = 0.5;
+        public static final double ANT_MEMORY_EMA_ALPHA = 0.05;                     // peso della memoria delle formiche
+        public static final double DEFAULT_ANT_PHEROMONE_SENSIBILITY = 0.05;        // 5% per stimoli chimici (Weber's Law)
         
 
         // Density Field defaults
         public static final double DEFAULT_DIFFUSION_RATE = 0.3;
 
-        // Setup defaults
+        // Full Simulation defaults
         public static final int DEFAULT_NEST_NUMBER = 1;
-        public static final int DEFAULT_ANT_NUMBER = 300;
+        public static final int DEFAULT_ANT_NUMBER = 500;
         public static final int DEFAULT_CLUMP_SIZE = 500;
         public static final int DEFAULT_CLUMP_NUMBER = 10;
 
@@ -60,6 +62,7 @@ public class SimulationParameters {
     private double explorationRate = DEFAULT_EXPLORATION_RATE;
     private int antSensorRadius = DEFAULT_ANT_SENSOR_RADIUS;
     private double antSensorAngle = DEFAULT_ANT_SENSOR_ANGLE;
+    private double antPheromoneSensibility = DEFAULT_ANT_PHEROMONE_SENSIBILITY;
 
     // Density Field Settings
     private double diffusionRate = DEFAULT_DIFFUSION_RATE;
@@ -107,7 +110,10 @@ public class SimulationParameters {
 
         public static final double EXPLORATION_RATE_MIN = 0.0;
         public static final double EXPLORATION_RATE_MAX = 1.0;
-        
+
+        public static final double ANT_PHEROMONE_SENSIBILITY_MIN = 0.01;
+        public static final double ANT_PHEROMONE_SENSIBILITY_MAX = 1;
+
         // Density Field constraints
         public static final double DIFFUSION_RATE_MIN = 0.0;
         public static final double DIFFUSION_RATE_MAX = 0.8;
@@ -222,6 +228,9 @@ public class SimulationParameters {
     // Per gli angoli dei sensori niente setter, perchè non sono modificabili in real-time
     public double getAntSensorAngle() { return antSensorAngle; }
 
+    // Per la memoria delle formiche niente setter, perchè non è modificabile in real-time
+    public double getAntMemoryEMAAlpha() { return ANT_MEMORY_EMA_ALPHA; }
+
     public double getAntSpeed() { return antSpeed; }
     public void setAntSpeed(double value) {
         double oldValue = antSpeed;
@@ -235,7 +244,14 @@ public class SimulationParameters {
         explorationRate = clamp(value, Constraints.EXPLORATION_RATE_MIN, Constraints.EXPLORATION_RATE_MAX);
         notifyListeners("explorationRate", oldValue, explorationRate);
     }
-    
+
+    public double getAntPheromoneSensibility() { return antPheromoneSensibility; }
+    public void setAntPheromoneSensibility(double value) {
+        double oldValue = antPheromoneSensibility;
+        antPheromoneSensibility = clamp(value, Constraints.ANT_PHEROMONE_SENSIBILITY_MIN, Constraints.ANT_PHEROMONE_SENSIBILITY_MAX);
+        notifyListeners("antPheromoneSensibility", oldValue, antPheromoneSensibility);
+    }
+
     // ==================== DENSITY FIELD GETTERS/SETTERS ====================
     
     public double getDiffusionRate() { return diffusionRate; }
@@ -286,6 +302,7 @@ public class SimulationParameters {
         setAntFeelRadius(DEFAULT_ANT_FEEL_RADIUS);
         setAntSpeed(DEFAULT_ANT_SPEED);
         setExplorationRate(DEFAULT_EXPLORATION_RATE);
+        setAntPheromoneSensibility(DEFAULT_ANT_PHEROMONE_SENSIBILITY);
         setDiffusionRate(DEFAULT_DIFFUSION_RATE);
         setNestNumber(DEFAULT_NEST_NUMBER);
         setAntNumber(DEFAULT_ANT_NUMBER);

@@ -52,6 +52,8 @@ public class SidePanelController implements Initializable {
     @FXML private Label antSpeedValue;
     @FXML private Slider explorationRateSlider;
     @FXML private Label explorationRateValue;
+    @FXML private Slider antPheromoneSensibilitySlider;
+    @FXML private Label antPheromoneSensibilityValue;
 
     // Density Field Parameters
     @FXML private Slider diffusionRateSlider;
@@ -179,8 +181,18 @@ public class SidePanelController implements Initializable {
             SimulationParameters.Constraints.EXPLORATION_RATE_MIN, 
             SimulationParameters.Constraints.EXPLORATION_RATE_MAX, 
             params.getExplorationRate(), 
-            1, 
+            2, 
             params::setExplorationRate
+        );
+
+        setupSlider(
+            antPheromoneSensibilitySlider, 
+            antPheromoneSensibilityValue, 
+            SimulationParameters.Constraints.ANT_PHEROMONE_SENSIBILITY_MIN, 
+            SimulationParameters.Constraints.ANT_PHEROMONE_SENSIBILITY_MAX, 
+            params.getAntPheromoneSensibility(), 
+            2, 
+            params::setAntPheromoneSensibility
         );
 
         // Diffusion rate
