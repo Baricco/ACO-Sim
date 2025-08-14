@@ -1,6 +1,5 @@
 package com.example.managers;
 
-import java.lang.reflect.Parameter;
 import java.util.Random;
 import java.util.stream.IntStream;
 
@@ -94,7 +93,6 @@ public class DensityFieldManager {
         // Parametri dal paper
         double C_STAR_MIN = ParameterAdapter.getPheromoneMinIntensity();
         double C_STAR_MAX = ParameterAdapter.getPheromoneMaxIntensity();
-        double WEBER_FRACTION = 0.05; // 5% per stimoli chimici
         
         // Calcola soglia differenziale di Weber
         double justNoticeableDifference = currentIntensity * ParameterAdapter.getAntPheromoneSensibility();
