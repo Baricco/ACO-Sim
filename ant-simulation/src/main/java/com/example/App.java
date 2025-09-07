@@ -2,6 +2,8 @@ package com.example;
 
 import java.io.IOException;
 
+import com.example.simulation.SimulationType;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -11,6 +13,8 @@ import javafx.stage.Stage;
 public class App extends Application {
 
     private static Scene scene;
+
+    private static SimulationType selectedSimulation = SimulationType.FULL_SIMULATION;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -23,6 +27,14 @@ public class App extends Application {
         stage.setScene(scene);
         stage.setResizable(true);
         stage.show();
+    }
+
+    public static void setSelectedSimulation(SimulationType simulation) {
+        selectedSimulation = simulation;
+    }
+
+    public static SimulationType getSelectedSimulation() {
+        return selectedSimulation;
     }
 
     /**

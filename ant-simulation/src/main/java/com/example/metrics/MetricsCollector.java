@@ -1,5 +1,6 @@
 package com.example.metrics;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,10 +9,12 @@ import java.util.List;
 import com.example.graphics.Coord;
 
 public class MetricsCollector {
+    
     private static MetricsCollector instance;
     private List<LogEntry> entries;
     private long simulationStartTime;
     private String currentExperimentName;
+    public static final String LOGS_PATH = "logs" + File.separator; // Directory per i file di log
     
     private MetricsCollector() {
         entries = new ArrayList<>();
@@ -38,7 +41,7 @@ public class MetricsCollector {
     }
     
     public void exportToCSV(String filename) throws IOException {
-        try (FileWriter writer = new FileWriter(filename)) {
+        try (FileWriter writer = new FileWriter(LOGS_PATH + filename)) {
             writer.write("timestamp_ns,event_type,description,x,y,data\n");
             for (LogEntry entry : entries) {
                 writer.write(entry.toCSV() + "\n");

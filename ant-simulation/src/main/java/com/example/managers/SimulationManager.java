@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.example.graphics.GameCanvas;
 import com.example.graphics.PheromoneRenderer;
+import com.example.metrics.MetricsCollector;
 import com.example.model.Ant;
 import com.example.model.Food;
 import com.example.model.FoodClump;
@@ -263,6 +264,14 @@ public class SimulationManager {
                 double distance = ant.getPos().distance(food.getPos());
                 if (distance < ant.getSize() + food.getSize() / 2) {
                     ant.pickupFood(food);
+                    
+                    MetricsCollector.getInstance().logEvent(
+                        "FOOD_PICKUP", 
+                        "Ant " + ant.getSerialNumber() + " picked up food", 
+                        food.getCenter(),
+                        null
+                    );
+                    food.onPickedUp(ant);
                     food.disable();
                     updateFoodClump(food);
                     break;

@@ -3,6 +3,7 @@ package com.example.model;
 import java.util.Random;
 
 import com.example.graphics.Coord;
+import com.example.metrics.MetricsCollector;
 
 import javafx.scene.paint.Color;
 
@@ -29,6 +30,11 @@ public class Food extends GameObject {
 
     }
 
+    public void onPickedUp(Ant ant) {
+        MetricsCollector.getInstance().logEvent("FOOD_DISCOVERED", 
+            "Food picked up by Ant " + ant.getSerialNumber(), 
+            this.pos, "discovery_time");
+    }
     
     public void update(double deltaTime) {
         // Il cibo non ha logica di movimento, quindi non fa nulla

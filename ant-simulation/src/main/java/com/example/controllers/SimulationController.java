@@ -7,7 +7,13 @@ import java.util.ResourceBundle;
 import com.example.App;
 import com.example.graphics.GameCanvas;
 import com.example.managers.SimulationManager;
+import com.example.metrics.MetricsCollector;
+import com.example.simulation.DemoSimulation;
+import com.example.simulation.DoubleBridgeSimulation;
 import com.example.simulation.FullSimulation;
+import com.example.simulation.Simulation;
+import com.example.simulation.SimulationType;
+import com.example.simulation.TJunctionSimulation;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -124,18 +130,39 @@ public class SimulationController implements Initializable {
 
     public void startSimulationNow(double width, double height) {
         
-        // Crea simulazione
-        FullSimulation simulation = new FullSimulation(
-            gameCanvas.getWidth(), 
-            gameCanvas.getHeight()
-        );
+        Simulation simulation;
+        SimulationType experimentType = App.getSelectedSimulation();
 
-        System.out.println("Starting simulation with " + simulation.ANTS_NUMBER + " ants and " + simulation.FOODS_NUMBER + " food");
-
-        // Avvia simulazione
-        simulationManager.startSimulation(simulation);
+        switch (experimentType) {
+            case DOUBLE_BRIDGE:
+                simulation = new DoubleBridgeSimulation(width, height);
+                break;
+            case T_JUNCTION:
+                simulation = new TJunctionSimulation(width, height);
+                break;
+            case DEMO:
+                simulation = new DemoSimulation(width, height);
+                break;
+            default:
+                simulation = new FullSimulation(width, height);
+        }
         
+        System.out.println("Starting " + experimentType.getDisplayName() + 
+                        " with " + simulation.ANTS_NUMBER + " ants");
+        
+        simulationManager.startSimulation(simulation);
         updateUI();
+    }
+
+    @FXML
+    private void exportMetrics() {
+        try {
+            String filename = "experiment_" + System.currentTimeMillis() + ".csv";
+            MetricsCollector.getInstance().exportToCSV(filename);
+            System.out.println("Metrics exported to: " + filename);
+        } catch (IOException e) {
+            System.err.println("Error exporting metrics: " + e.getMessage());
+        }
     }
 
     @FXML

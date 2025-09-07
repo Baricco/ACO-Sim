@@ -5,6 +5,7 @@ C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\gr
 C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\managers\SimulationManager.java
 C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\model\GameObject.java
 C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\controllers\SimulationController.java
+C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\simulation\TJunctionSimulation.java
 C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\model\Food.java
 C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\managers\MultiHashGrid.java
 C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\model\FoodClump.java
@@ -13,6 +14,7 @@ C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\ma
 C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\model\VoidObj.java
 C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\config\SimulationParameters.java
 C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\config\ParameterAdapter.java
+C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\simulation\DoubleBridgeSimulation.java
 C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\simulation\FullSimulation.java
 C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\ui\OptionsDialog.java
 C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\controllers\SidePanelController.java
@@ -22,5 +24,7 @@ C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\mo
 C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\App.java
 C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\model\Pheromone.java
 C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\managers\HashGrid.java
+C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\metrics\MetricsCollector.java
 C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\graphics\GameCanvas.java
+C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\simulation\SimulationType.java
 C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\ui\ParametersPanel.java

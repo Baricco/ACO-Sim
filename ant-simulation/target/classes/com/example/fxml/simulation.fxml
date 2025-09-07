@@ -36,6 +36,8 @@
             <!-- Statistiche -->
             <Label fx:id="statsLabel" style="-fx-text-fill: white;" text="Ants: 0 | Food: 0 | FPS: 0" />
             <Label fx:id="statusLabel" style="-fx-text-fill: white;" text="Status" />
+            <Button fx:id="exportButton" text="Export Data" onAction="#exportMetrics" style="-fx-background-color: #607D8B; -fx-text-fill: white;"/>
+
          </children>
       </HBox>
    </top>

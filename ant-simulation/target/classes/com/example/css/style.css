@@ -116,3 +116,69 @@
 .slider .axis .axis-tick-mark {
     -fx-stroke: #555555;
 }
+
+
+.combo-box {
+    -fx-font-size: 14px;
+    -fx-padding: 10 15 10 15;
+    -fx-background-color: #0000008c;
+    -fx-text-fill: white;
+    -fx-background-radius: 10;
+    -fx-border-width: 0;
+}
+
+.combo-box:hover {
+    -fx-background-color: #000000b3;
+}
+
+.combo-box:focused {
+    -fx-background-color: #000000b3;
+    -fx-border-color: #7ec850;
+    -fx-border-width: 2;
+}
+
+/* Area del testo nella ComboBox */
+.combo-box .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-padding: 5 10 5 10;
+}
+
+/* Freccia della ComboBox */
+.combo-box .arrow {
+    -fx-background-color: white;
+}
+
+.combo-box .arrow-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0 10 10 0;
+}
+
+.combo-box .arrow-button:hover {
+    -fx-background-color: rgba(255,255,255,0.1);
+}
+
+/* Lista a tendina */
+.combo-box-popup .list-view {
+    -fx-background-color: #0000008c;
+    -fx-background-radius: 10;
+    -fx-border-color: #7ec850;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 2, 2);
+}
+
+.combo-box-popup .list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-padding: 8 15 8 15;
+    -fx-border-width: 0;
+}
+
+.combo-box-popup .list-view .list-cell:hover {
+    -fx-background-color: #000000b3;
+}
+
+.combo-box-popup .list-view .list-cell:selected {
+    -fx-background-color: #7ec850;
+    -fx-text-fill: white;
+}

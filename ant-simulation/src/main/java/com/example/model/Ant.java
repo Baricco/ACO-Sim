@@ -1,5 +1,7 @@
 package com.example.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import com.example.config.ParameterAdapter;
@@ -8,6 +10,7 @@ import com.example.graphics.Coord;
 import com.example.graphics.GameCanvas;
 import com.example.managers.DensityFieldManager;
 import com.example.managers.MultiHashGrid;
+import com.example.metrics.MetricsCollector;
 
 import javafx.scene.paint.Color;
 
@@ -68,6 +71,12 @@ public class Ant extends GameObject {
     // Memoria della formica
     private double pheromoneMovingAverage = 0;
 
+    // Sistema di Logging
+    private List<Coord> pathHistory = new ArrayList<>();
+    private long lastPathLogTime = 0;
+    private static final long PATH_LOG_INTERVAL = 500_000_000; // 0.5 secondi in nanosecondi
+
+
     public Ant(double mapWidth, double mapHeight, Nest nest) {
         super(GameObjType.ANT, GameObject.getNewSerialNumber(), ANT_SIZE, GameObject.generateRandomPosition(mapWidth, mapHeight, ANT_SIZE));
         this.direction = generateRandomVector();
@@ -112,6 +121,9 @@ public class Ant extends GameObject {
         
         // Aggiorna l'angolo per la visualizzazione
         updateAngle();
+
+        // Logga lo stato della formica
+        logPath();
 
     }
     
@@ -516,6 +528,20 @@ public class Ant extends GameObject {
             // si è scelto il sensore destro
             return this.rightSensor.getPointingDirection();
         }
+    }
+
+    private void logPath() {
+        long currentTime = System.nanoTime();
+        if (currentTime - lastPathLogTime > PATH_LOG_INTERVAL) {
+            pathHistory.add(pos.copy());
+            MetricsCollector.getInstance().logEvent("ANT_POSITION", 
+                "Ant " + serialNumber, pos, getCurrentState());
+            lastPathLogTime = currentTime;
+        }
+    }
+
+    private String getCurrentState() {
+        return hasFoodLoad() ? "RETURNING" : "SEARCHING";
     }
 
     private void updateMilestoneTracking() {

@@ -9,18 +9,18 @@ import com.example.config.SimulationParameters;
 import com.example.graphics.GameCanvas;
 import com.example.managers.SimulationManager;
 import com.example.simulation.DemoSimulation;
+import com.example.simulation.SimulationType;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /**
@@ -30,7 +30,11 @@ public class StartWindowController implements Initializable {
 
     @FXML private Pane backgroundPane;
     @FXML private Button startButton;
-    
+
+    @FXML private ComboBox<SimulationType> simulationSelector;
+
+    @FXML private Label simulationDescription;
+
     private GameCanvas demoCanvas;
     private SimulationManager demoManager;
 
@@ -38,6 +42,9 @@ public class StartWindowController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         System.out.println("StartWindowController initialized");
         
+        // Popola il ComboBox con i tipi di simulazione
+        setupSimulationSelector();
+
         // Crea il canvas per la demo in background
         setupDemoBackground();
         
@@ -76,7 +83,12 @@ public class StartWindowController implements Initializable {
             // Ferma la demo
             demoManager.stopSimulation();
             
-            // Passa alla scena di simulazione
+            // Passa il tipo di esperimento selezionato
+            SimulationType selectedSimulation = simulationSelector.getValue();
+            
+            // Salva la selezione per SimulationController
+            App.setSelectedSimulation(selectedSimulation);
+            
             App.setRoot("simulation");
             
         } catch (IOException e) {
@@ -193,5 +205,15 @@ public class StartWindowController implements Initializable {
         if (demoManager != null && !demoManager.isRunning()) {
             startDemoSimulation();
         }
+    }
+
+    private void setupSimulationSelector() {
+        simulationSelector.getItems().addAll(SimulationType.values());
+        simulationSelector.setValue(SimulationType.FULL_SIMULATION);
+
+        simulationSelector.setOnAction(e -> {
+            SimulationType selected = simulationSelector.getValue();
+            simulationDescription.setText(selected.getDescription());
+        });
     }
 }
