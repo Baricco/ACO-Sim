@@ -15,15 +15,6 @@ public class Coord {
         this.x = coord.x;
         this.y = coord.y;
     }
-    
-
-    /*  Questa funzione andrà implementata poi
-    public Coord(int diameter){     //costruttore specializzato per la mappa
-        this.x = Math.abs(Main.RND.nextInt()) % (Simulation.getMap().getWidth() - diameter);
-        this.y = Math.abs(Main.RND.nextInt()) % (Simulation.getMap().getHeight() - diameter); 
-    }
-
-    */
 
 
     public void multiply(double factor) {
@@ -40,8 +31,15 @@ public class Coord {
     }
 
     public double distance(Coord point){
-        return Math.sqrt(Math.pow((this.x - point.x), 2) + Math.pow((this.y - point.y), 2));
+        return Math.sqrt(distanceSquared(point));
     }
+
+    public double distanceSquared(Coord point) {
+        double dx = this.x - point.x;
+        double dy = this.y - point.y;
+        return dx * dx + dy * dy;
+    }
+
     
     public void sum(Coord coord) {
         this.x += coord.x;

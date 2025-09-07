@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Gestisce tutti i parametri della simulazione con supporto per:
+ * Gestisce tutti i parametri della simulazione con:
  * - Valori default, min, max
  * - Validazione automatica
  * - Observer pattern per aggiornamenti real-time
@@ -34,7 +34,7 @@ public class SimulationParameters {
         public static final double DEFAULT_EXPLORATION_RATE = 0.5;
         public static final double ANT_MEMORY_EMA_ALPHA = 0.05;                     // peso della memoria delle formiche
         public static final double DEFAULT_ANT_PHEROMONE_SENSIBILITY = 0.05;        // 5% per stimoli chimici (Weber's Law)
-        
+        public static final double DEFAULT_PHEROMONE_SATURATION_FACTOR = 2.0;       // Fattore di saturazione dei feromoni
 
         // Density Field defaults
         public static final double DEFAULT_DIFFUSION_RATE = 0.3;
@@ -63,6 +63,7 @@ public class SimulationParameters {
     private int antSensorRadius = DEFAULT_ANT_SENSOR_RADIUS;
     private double antSensorAngle = DEFAULT_ANT_SENSOR_ANGLE;
     private double antPheromoneSensibility = DEFAULT_ANT_PHEROMONE_SENSIBILITY;
+    private double pheromoneSaturationFactor = DEFAULT_PHEROMONE_SATURATION_FACTOR;
 
     // Density Field Settings
     private double diffusionRate = DEFAULT_DIFFUSION_RATE;
@@ -109,7 +110,7 @@ public class SimulationParameters {
         public static final double ANT_SPEED_MAX = 500.0;
 
         public static final double EXPLORATION_RATE_MIN = 0.0;
-        public static final double EXPLORATION_RATE_MAX = 1.0;
+        public static final double EXPLORATION_RATE_MAX = 3.0;
 
         public static final double ANT_PHEROMONE_SENSIBILITY_MIN = 0.01;
         public static final double ANT_PHEROMONE_SENSIBILITY_MAX = 1;
@@ -251,6 +252,9 @@ public class SimulationParameters {
         antPheromoneSensibility = clamp(value, Constraints.ANT_PHEROMONE_SENSIBILITY_MIN, Constraints.ANT_PHEROMONE_SENSIBILITY_MAX);
         notifyListeners("antPheromoneSensibility", oldValue, antPheromoneSensibility);
     }
+
+    // Per la saturazione dei feromoni niente setter, perchè non è modificabile in real-time
+    public double getPheromoneSaturationFactor() { return pheromoneSaturationFactor; }
 
     // ==================== DENSITY FIELD GETTERS/SETTERS ====================
     

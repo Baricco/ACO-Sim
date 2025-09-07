@@ -26,8 +26,8 @@ public class Ant extends GameObject {
     public static final Color ANT_FEEL_COLOR = Color.rgb(255, 255, 0, 0.2); // Colore per il raggio di percezione
     public static final Color ANT_SENSOR_COLOR = Color.rgb(255, 0, 255, 0.2); // Colore per il raggio di sensori
     public static final Color ANT_COLOR = Color.RED;
-    public static final int WINDOW_BOUND_MARGIN = -ANT_SIZE/2; // Margine per il rimbalzo sui bordi della finestra
-    public static final int MAX_FOOD_SEARCH_TIME = 10000;       // tempo massimo di ricerca del cibo in millisecondi
+    public static final int WINDOW_BOUND_MARGIN = -ANT_SIZE/2;              // Margine per il rimbalzo sui bordi della finestra
+    public static final int MAX_FOOD_SEARCH_TIME = 10000;                   // tempo massimo di ricerca del cibo in millisecondi
 
     private static final Random RANDOM = new Random();
     private static final double SMOOTH_MOVEMENT_FACTOR = 0.2;
@@ -37,8 +37,8 @@ public class Ant extends GameObject {
     protected GameObject foodLoad;
     protected double mapWidth;
     protected double mapHeight;
-    protected double angle; // Per la rotazione visuale
-    protected Nest nest; // Riferimento al nido della formica
+    protected double angle;                                  // Per la rotazione visuale
+    protected Nest nest;                                     // Riferimento al nido della formica
 
     // Comportamento della formica
     protected ANT_BEHAVIOUR behaviour;
@@ -59,8 +59,8 @@ public class Ant extends GameObject {
     private Coord lastMilestonePosition;
     private double lastMilestoneTime;
 
-    private double startTrackTime;                 // Tempo di inizio tracking
-    private int tripNumber = 0;                        // Numero di viaggi effettuati
+    private double startTrackTime;                      // Tempo di inizio tracking
+    private int tripNumber = 0;                         // Numero di viaggi effettuati
 
     // Sensori per i feromoni
     private Sensor leftSensor, frontSensor, rightSensor;
@@ -178,7 +178,7 @@ public class Ant extends GameObject {
         if (!this.hasFoodLoad()) {
             // Se non ha il cibo, ma sta vagando da troppo tempo, torna al nido
             if (this.getStartTrackTime() - System.nanoTime() > Ant.MAX_FOOD_SEARCH_TIME) {
-                System.out.printf("Sono la formica: %d e sto tornando al nido perchè non trovo niente :(", this.serialNumber);
+                System.out.printf("Sono la formica: %d e sto tornando al nido perchè non trovo niente", this.serialNumber);
                 followNestPheromoneGradient();
             }
             return false;
@@ -196,8 +196,10 @@ public class Ant extends GameObject {
 
     private void followNestPheromoneGradient() {
         
+        double threshold = getAntSightRadius() + this.nest.getSize();
+
         // Se il Nest è nel raggio di visione della formica, vai diretto al Nest
-        if (nest.getPos().distance(this.getCenter()) <= getAntSightRadius() + this.nest.getSize()) {
+        if (nest.getPos().distanceSquared(this.getCenter()) <= threshold * threshold) {
             setDirection(calcDirectionToNest());
             return;
         }
@@ -488,9 +490,9 @@ public class Ant extends GameObject {
 
 
         // Calcola la probabilità per ogni direzione come intensità relativa + tasso di esplorazione
-        double leftProbability = leftIntensity / totalIntensity + explorationRate / 3;
-        double frontProbability = frontIntensity / totalIntensity + explorationRate / 3;
-        double rightProbability = rightIntensity / totalIntensity + explorationRate / 3;
+        double leftProbability = (leftIntensity / totalIntensity) + (explorationRate / 3);
+        double frontProbability = (frontIntensity / totalIntensity) + (explorationRate / 3);
+        double rightProbability = (rightIntensity / totalIntensity) + (explorationRate / 3);
 
 
         // normalizzazione delle probabilità
@@ -505,13 +507,13 @@ public class Ant extends GameObject {
         double rand = RANDOM.nextDouble();
 
         if (rand < frontProbability) {
-            // Il sensore frontale ha il valore più alto
+            // si è scelto il sensore frontale
             return this.frontSensor.getPointingDirection();
         } else if (rand < leftProbability + frontProbability) {
-            // Il sensore sinistro ha il valore più alto
-            return this.leftSensor.getPointingDirection();  
+            // si è scelto il sensore sinistro
+            return this.leftSensor.getPointingDirection();
         } else {
-            // Il sensore destro ha il valore più alto
+            // si è scelto il sensore destro
             return this.rightSensor.getPointingDirection();
         }
     }

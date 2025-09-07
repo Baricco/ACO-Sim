@@ -90,14 +90,15 @@ public class DensityFieldManager {
 
     // Saturazione dei feromoni basata sulla legge di Weber-Fechner (Ant Navigation Model based on Webers Law)
     public double calculateWeberFechnerSuppression(double currentIntensity, double newIntensity) {
-        // Parametri dal paper
+        
+        // Parametri
         double C_STAR_MIN = ParameterAdapter.getPheromoneMinIntensity();
-        double C_STAR_MAX = ParameterAdapter.getPheromoneMaxIntensity();
+        double C_STAR_MAX = ParameterAdapter.getPheromoneMaxIntensity() / ParameterAdapter.getPheromoneSaturationFactor();
         
         // Calcola soglia differenziale di Weber
         double justNoticeableDifference = currentIntensity * ParameterAdapter.getAntPheromoneSensibility();
         
-        // Solo deposita se il nuovo feromone è percettibilmente diverso
+        // deposita solo se il nuovo feromone è percettibilmente diverso
         if (newIntensity < justNoticeableDifference) {
             return 0.0; // Sotto soglia Weber
         }
@@ -139,10 +140,9 @@ public class DensityFieldManager {
     private double calcPheromoneIntensity(Ant ant) {
 
         // Sistema che usa il tempo
-
         double lastMilestoneTime = ant.getStartTrackTime();
 
-        if (lastMilestoneTime <= 0) return ParameterAdapter.getPheromoneInitialIntensity(); // Se non c'è milestone, usa intensità iniziale QUESTA RIGA VA CAMBIATA
+        if (lastMilestoneTime <= 0) return ParameterAdapter.getPheromoneInitialIntensity(); // Se non c'è milestone, usa intensità iniziale
 
         double timeSinceLastMilestone = System.nanoTime() - lastMilestoneTime;
 
@@ -150,26 +150,7 @@ public class DensityFieldManager {
 
         double normalizedTime = Math.min(timeSinceLastMilestone / Pheromone.MAX_PHEROMONE_TRAIL_DURATION, 1.0);
 
-        if (normalizedTime >= 1.0) return 0;
-
-        //System.out.printf("Ant %d pheromone intensity: %.2f (time: %.2f)\n", ant.getSerialNumber(), Pheromone.INITIAL_INTENSITY * (1 - normalizedTime), timeSinceLastMilestone);
-
         return Math.max(ParameterAdapter.getPheromoneMinIntensity(), ParameterAdapter.getPheromoneInitialIntensity() * (1 - normalizedTime));
-
-        /*
-
-        // Sistema che usa la distanza (distanza dalla milestone, non distanza percorsa, infatti era sbagliato)
-
-        Coord milestonePos = ant.getLastMilestonePosition();
-
-        if (milestonePos == null) return Pheromone.INITIAL_INTENSITY; // Se non c'è milestone, usa intensità iniziale
-
-        // calcola la distanza normalizzata tra la posizione della formica e la milestone
-        double normalizedDistance = Math.min(ant.getCenter().distance(milestonePos) / Pheromone.MAX_PHEROMONE_TRAIL_DISTANCE, 1.0);
-
-        // Calcola l'intensità in base alla distanza normalizzata
-        return Math.max(Pheromone.MIN_INTENSITY, Pheromone.INITIAL_INTENSITY * (1 - normalizedDistance));
-        */
     }
     
     /**

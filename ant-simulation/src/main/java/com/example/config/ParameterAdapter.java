@@ -64,7 +64,11 @@ public class ParameterAdapter {
     public static double getAntPheromoneSensibility() {
         return params.getAntPheromoneSensibility();
     }
-    
+
+    public static double getPheromoneSaturationFactor() {
+        return params.getPheromoneSaturationFactor();
+    }
+
     // ==================== DENSITY FIELD PARAMETERS ====================
     
     public static double getDiffusionRate() {

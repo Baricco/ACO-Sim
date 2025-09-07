@@ -77,15 +77,15 @@ public class HashGrid<T extends GameObject> {
     }
 
     public Coord getNearestGameObjectDirection(Coord pos, double maxDistance) {
-        double minDistance = maxDistance;
+        double minDistance = maxDistance * maxDistance; // Confronto con distanza al quadrato
         Coord nearestGameObjectPos = null;
 
         for (T obj : getGameObjectsNear(pos, maxDistance)) {
             if (!obj.isEnabled()) continue;
-            
-            double distance = obj.getCenter().distance(pos);
-            if (distance < minDistance) {
-                minDistance = distance;
+
+            double distanceSquared = obj.getCenter().distanceSquared(pos);
+            if (distanceSquared < minDistance) {
+                minDistance = distanceSquared;
                 nearestGameObjectPos = obj.getCenter();
             }
         }
