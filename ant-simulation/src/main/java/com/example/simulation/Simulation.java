@@ -6,10 +6,12 @@ import java.util.List;
 
 import com.example.graphics.Coord;
 import com.example.managers.DensityFieldManager;
+import com.example.managers.ObstacleManager;
 import com.example.model.Ant;
 import com.example.model.Food;
 import com.example.model.FoodClump;
 import com.example.model.Nest;
+
 
 public class Simulation {
 
@@ -30,6 +32,9 @@ public class Simulation {
     protected int selectedAntIndex;                   // indice della formica selezionata per visualizzazione dettagli
 
     protected DensityFieldManager densityManager;
+    protected ObstacleManager obstacleManager;
+
+    protected boolean hasObstacles = false;
     
     protected boolean exit = false;
 
@@ -186,6 +191,12 @@ public class Simulation {
             return new ArrayList<>(foods);
         }
     }
+
+    public ObstacleManager getObstacleManager() {
+        return obstacleManager;
+    }
+
+    public boolean hasObstacles() { return this.hasObstacles; }
     
     public void setExit(boolean exit) { this.exit = exit; }
     public boolean isExit() { return exit; }

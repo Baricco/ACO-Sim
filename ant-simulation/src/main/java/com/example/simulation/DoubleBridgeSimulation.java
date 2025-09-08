@@ -15,6 +15,7 @@ public class DoubleBridgeSimulation extends Simulation {
         super(1, 200, 1000, mapWidth, mapHeight);
         initDensityManager();
         this.ANTS_BEHAVIOUR = Ant.ANT_BEHAVIOUR.ALL_PHEROMONES;
+        this.hasObstacles = false;
     }
     
     @Override

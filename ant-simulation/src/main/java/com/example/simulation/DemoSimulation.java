@@ -15,6 +15,7 @@ public class DemoSimulation extends Simulation {
         super(NESTS_NUMBER, ANTS_NUMBER, FOODS_NUMBER, mapWidth, mapHeight);
         this.selectedAntIndex = -1;                    // Inizializza l'indice della formica selezionata
         this.ANTS_BEHAVIOUR = Ant.ANT_BEHAVIOUR.RANDOM; // Comportamento predefinito per la simulazione
+        this.hasObstacles = false;
     }
 
     @Override

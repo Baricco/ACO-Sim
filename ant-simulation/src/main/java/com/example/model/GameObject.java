@@ -14,7 +14,8 @@ public abstract class GameObject {
         FOOD,
         NEST,
         FOOD_CLUMP,
-        PHEROMONE
+        PHEROMONE,
+        OBSTACLE
     }
 
     private static Random RANDOM = new Random();

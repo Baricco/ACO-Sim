@@ -3,6 +3,7 @@ C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\mo
 C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\controllers\StartWindowController.java
 C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\graphics\PheromoneRenderer.java
 C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\managers\SimulationManager.java
+C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\managers\ObstacleManager.java
 C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\model\GameObject.java
 C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\controllers\SimulationController.java
 C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\simulation\TJunctionSimulation.java
@@ -15,6 +16,7 @@ C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\mo
 C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\config\SimulationParameters.java
 C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\config\ParameterAdapter.java
 C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\simulation\DoubleBridgeSimulation.java
+C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\model\Obstacle.java
 C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\simulation\FullSimulation.java
 C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\ui\OptionsDialog.java
 C:\Users\baricco\Desktop\AntSim-tesi\ant-simulation\src\main\java\com\example\controllers\SidePanelController.java

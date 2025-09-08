@@ -9,6 +9,7 @@ import com.example.model.Ant;
 import com.example.model.Food;
 import com.example.model.FoodClump;
 import com.example.model.Nest;
+import com.example.model.Obstacle;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -226,6 +227,42 @@ public class GameCanvas extends Canvas {
             gc.setLineWidth(1);
             gc.strokeOval(pos.x, pos.y, size, size);
         }
+    }
+
+    public void drawObstacle(Obstacle obstacle) {
+        GraphicsContext gc = getGraphicsContext2D();
+        
+        // Salva il contesto
+        gc.save();
+        
+        // Imposta colore grigio per gli ostacoli
+        gc.setFill(Color.GRAY);
+        gc.setStroke(Color.DARKGRAY);
+        gc.setLineWidth(2);
+        
+        // Ottieni posizione e dimensioni
+        Coord pos = obstacle.getPos();
+        Coord size = obstacle.getSizeCoord();
+
+        if (obstacle.getObstacleType() == Obstacle.ObstacleType.CIRCLE) {
+            // Disegna cerchio grigio centrato sulla posizione
+            gc.fillOval(pos.x - size.x / 2, pos.y - size.y / 2, size.x, size.y);
+            gc.strokeOval(pos.x - size.x / 2, pos.y - size.y / 2, size.x, size.y);
+            
+            // Ripristina il contesto
+            gc.restore();
+            return;
+        }
+        else {
+            // Disegna rettangolo grigio centrato sulla posizione
+            double x = pos.x - size.x / 2;
+            double y = pos.y - size.y / 2;
+
+            gc.fillRect(x, y, size.x, size.y);
+            gc.strokeRect(x, y, size.x, size.y);
+        }
+        // Ripristina il contesto
+        gc.restore();
     }
     
     /**

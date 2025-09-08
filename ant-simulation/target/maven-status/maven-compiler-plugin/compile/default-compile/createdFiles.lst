@@ -12,8 +12,10 @@ com\example\metrics\MetricsCollector$LogEntry.class
 com\example\config\SimulationParameters$Constraints.class
 com\example\managers\SimulationManager$StatsUpdateCallback.class
 com\example\model\Food.class
+com\example\model\Obstacle$ObstacleType.class
 com\example\model\Pheromone$PheromoneType.class
 com\example\controllers\OptionsController$1.class
+com\example\model\Obstacle.class
 com\example\simulation\DemoSimulation.class
 com\example\model\Nest.class
 com\example\ui\OptionsDialog.class
@@ -25,6 +27,7 @@ com\example\graphics\GameCanvas.class
 com\example\controllers\SimulationController$1.class
 com\example\App.class
 com\example\model\Pheromone.class
+com\example\managers\ObstacleManager.class
 com\example\model\Ant$ANT_BEHAVIOUR.class
 com\example\config\SimulationParameters$ParameterChangeListener.class
 com\example\config\SimulationParameters.class

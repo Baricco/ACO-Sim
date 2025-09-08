@@ -10,6 +10,7 @@ import com.example.graphics.Coord;
 import com.example.graphics.GameCanvas;
 import com.example.managers.DensityFieldManager;
 import com.example.managers.MultiHashGrid;
+import com.example.managers.ObstacleManager;
 import com.example.metrics.MetricsCollector;
 
 import javafx.scene.paint.Color;
@@ -75,6 +76,10 @@ public class Ant extends GameObject {
     private List<Coord> pathHistory = new ArrayList<>();
     private long lastPathLogTime = 0;
     private static final long PATH_LOG_INTERVAL = 500_000_000; // 0.5 secondi in nanosecondi
+
+    // Sistema di evitamento ostacoli
+
+    private ObstacleManager obstacleManager;
 
 
     public Ant(double mapWidth, double mapHeight, Nest nest) {
@@ -389,7 +394,6 @@ public class Ant extends GameObject {
     }
 
     private void move(double deltaTime) {
-
         if (direction == null) return;
 
         Coord movement = new Coord(
@@ -397,20 +401,74 @@ public class Ant extends GameObject {
             direction.y * deltaTime * getAntSpeed()
         );
         
+        // Calcola la posizione futura
+        Coord futurePos = pos.copy();
+        futurePos.sum(movement);
+        
+        // Controlla se la posizione futura causerebbe collisioni
+        if (wouldCollideWithBounds(futurePos) || wouldCollideWithObstacles(futurePos)) {
+            // Invece di muoversi, cambia direzione
+            this.turnAround();
+            return; // Non muovere se causerebbe collisione
+        }
+        
+        // Solo se sicuro, effettua il movimento
         this.movePos(movement);
+    }
+
+    private boolean wouldCollideWithBounds(Coord futurePos) {
+        double halfSize = this.getSize() / 2.0;
+        double halfFoodSize = this.getFoodLoad().getSize() / 2.0;
+        
+        return (futurePos.x - halfSize - halfFoodSize < WINDOW_BOUND_MARGIN) ||
+            (futurePos.x + halfSize + halfFoodSize > mapWidth - WINDOW_BOUND_MARGIN) ||
+            (futurePos.y - halfSize - halfFoodSize < WINDOW_BOUND_MARGIN) ||
+            (futurePos.y + halfSize + halfFoodSize > mapHeight - WINDOW_BOUND_MARGIN);
+    }
+
+    private boolean wouldCollideWithObstacles(Coord futurePos) {
+        if (obstacleManager == null) return false;
+        
+        // Crea un oggetto temporaneo per testare la posizione futura
+        Coord originalPos = pos;
+        pos = futurePos; // Temporaneamente sposta alla posizione futura
+        
+        boolean collision = obstacleManager.isCollidingWithObstacle(this, WINDOW_BOUND_MARGIN);
+        
+        pos = originalPos; // Ripristina posizione originale
+        
+        return collision;
     }
 
     private void checkBounds() {
         
+        // sposta la formica in una posizione sicura
+        
         Coord center = this.getCenter();
-
-        // Rimbalza sui bordi
-        if (
-            (center.x - this.getSize() / 2 - this.getFoodLoad().getSize() / 2 < WINDOW_BOUND_MARGIN && this.direction.x < 0) || 
-            (center.x + this.getSize() / 2 + this.getFoodLoad().getSize() / 2 > mapWidth - WINDOW_BOUND_MARGIN && this.direction.x > 0) ||
-            (center.y - this.getSize() / 2 - this.getFoodLoad().getSize() / 2 < WINDOW_BOUND_MARGIN && this.direction.y < 0) ||
-            (center.y + this.getSize() / 2 + this.getFoodLoad().getSize() / 2 > mapHeight - WINDOW_BOUND_MARGIN && this.direction.y > 0)
-            ) {
+        boolean stuck = false;
+        
+        // Controlla se è bloccata ai bordi
+        if (wouldCollideWithBounds(center)) {
+            // Sposta verso il centro della mappa
+            pos.x = Math.max(WINDOW_BOUND_MARGIN + getSize()/2, 
+                    Math.min(mapWidth - WINDOW_BOUND_MARGIN - getSize()/2, pos.x));
+            pos.y = Math.max(WINDOW_BOUND_MARGIN + getSize()/2, 
+                    Math.min(mapHeight - WINDOW_BOUND_MARGIN - getSize()/2, pos.y));
+            stuck = true;
+        }
+        
+        // Controlla se è bloccata negli ostacoli
+        if (obstacleManager != null && obstacleManager.isCollidingWithObstacle(this, WINDOW_BOUND_MARGIN)) {
+            // Sposta in posizione libera più vicina
+            Coord freePos = obstacleManager.findNearestFreePosition(this, WINDOW_BOUND_MARGIN);
+            if (freePos != null) {
+                pos = freePos;
+            }
+            stuck = true;
+        }
+        
+        // Se era bloccata, cambia direzione
+        if (stuck) {
             this.turnAround();
         }
 
@@ -564,6 +622,12 @@ public class Ant extends GameObject {
     public void attachDensityManager(DensityFieldManager densityFieldManager) {
         if (this.densityFieldManager != null || densityFieldManager == null) return;
         this.densityFieldManager = densityFieldManager;
+    }
+
+    public void attachObstacleManager(ObstacleManager obstacleManager) {
+        if (obstacleManager == null || this.obstacleManager != null) return;  // Solo se parametro è null
+        this.obstacleManager = obstacleManager;
+        System.out.println("ObstacleManager ASSEGNATO alla formica " + getSerialNumber());
     }
 
     public Coord getLastPheromonePosition() { 

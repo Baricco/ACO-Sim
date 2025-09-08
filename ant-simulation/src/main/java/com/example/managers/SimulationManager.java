@@ -9,6 +9,7 @@ import com.example.model.Ant;
 import com.example.model.Food;
 import com.example.model.FoodClump;
 import com.example.model.Nest;
+import com.example.model.Obstacle;
 import com.example.model.Pheromone;
 import com.example.simulation.Simulation;
 
@@ -183,6 +184,10 @@ public class SimulationManager {
 
             ant.attachMultiHashGrid(gameObjectGrid);
 
+            if (currentSimulation.hasObstacles()) {
+                ant.attachObstacleManager(currentSimulation.getObstacleManager());
+            }
+
             if (ant.equals(currentSimulation.getSelectedAnt())) {
                 ant.setSize(Ant.ANT_SIZE * SELECTED_ANT_SIZE_MULTIPLIER); // Aumenta la dimensione della formica selezionata
             } else {
@@ -339,6 +344,14 @@ public class SimulationManager {
         var foodClumps = currentSimulation.getFoodClumps();
 
         long pheromoneRenderStart = System.nanoTime();
+
+        // Renderizza ostacoli
+        if (currentSimulation.hasObstacles()) {
+            List<Obstacle> obstacles = currentSimulation.getObstacleManager().getObstacles();
+            for (Obstacle obstacle : obstacles) {
+                canvas.drawObstacle(obstacle);
+            }
+        }
 
         // Renderizza density field
         if (pheromonesEnabled && currentSimulation.getDensityManager() != null) {

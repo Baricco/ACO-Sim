@@ -16,6 +16,7 @@ public class FullSimulation extends Simulation {
         );
         initDensityManager();
         this.ANTS_BEHAVIOUR = Ant.ANT_BEHAVIOUR.ALL_PHEROMONES;      // Comportamento predefinito per la simulazione
+        this.hasObstacles = false;
     }
 
     @Override
