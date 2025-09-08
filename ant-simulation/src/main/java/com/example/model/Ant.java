@@ -75,7 +75,8 @@ public class Ant extends GameObject {
     // Sistema di Logging
     private List<Coord> pathHistory = new ArrayList<>();
     private long lastPathLogTime = 0;
-    private static final long PATH_LOG_INTERVAL = 500_000_000; // 0.5 secondi in nanosecondi
+    private long lastDecisionLogTime = 0;
+    private static final long LOG_INTERVAL = 500_000_000; // 0.5 secondi in nanosecondi
 
     // Sistema di evitamento ostacoli
 
@@ -218,6 +219,7 @@ public class Ant extends GameObject {
         // Se il Nest è nel raggio di visione della formica, vai diretto al Nest
         if (nest.getPos().distanceSquared(this.getCenter()) <= threshold * threshold) {
             setDirection(calcDirectionToNest());
+            logBehavioralDecision("FOLLOW_NEST", 0, false);
             return;
         }
 
@@ -242,7 +244,9 @@ public class Ant extends GameObject {
         // Se i feromoni sono troppo deboli, usa movimento casuale
         if (pheromoneDirection.length() <= ParameterAdapter.getPheromoneMinIntensity()) {
             pheromoneDirection = handleRandomSteering();
+            logBehavioralDecision("FOLLOW_NEST_RANDOM", 0, false);
         } else {
+            logBehavioralDecision("FOLLOW_NEST_PHEROMONE", pheromoneDirection.length(), true);
             pheromoneDirection.normalize();
         }
         
@@ -254,6 +258,7 @@ public class Ant extends GameObject {
 
     private void updateDirectionRandomly() {
         Coord randomDirection = handleRandomSteering();
+        logBehavioralDecision("RANDOM_WALK", 0, false);
         applyDirectionChange(randomDirection);
     }
 
@@ -285,32 +290,18 @@ public class Ant extends GameObject {
         Coord foodDirection = this.multiHashGrid.getNearestFoodDirection(pos, getAntFeelRadius());
         if (foodDirection != null) {
             setDirection(foodDirection);
+            logBehavioralDecision("FOLLOW_FOOD", 0, false);
             return;
         }
         
         Coord pheromoneDirection = getPheromoneDirectionSensed(Pheromone.PheromoneType.FOOD_TRAIL);
-
-        // Vecchio codice con il gradiente
-        //Coord pheromoneDirection = this.densityFieldManager.getPheromoneGradient(this.getCenter(), Pheromone.PheromoneType.FOOD_TRAIL);
-        
-        /*
-
-        double localIntensity = this.densityFieldManager.getTotalIntensity(
-            this.getCenter(), Pheromone.PheromoneType.FOOD_TRAIL);
-        
-        // Debug periodico per alcune formiche
-        if (this.serialNumber == 100) {
-            System.out.printf("Ant %d: Gradient=%.3f, LocalIntensity=%.3f, UsingPheromones=%s\n", 
-                serialNumber, pheromoneDirection.length(), localIntensity, 
-                (pheromoneDirection.length() > 0.001) ? "YES" : "NO");
-        }
-
-        */
         
         // Se i feromoni sono troppo deboli, usa movimento casuale
         if (pheromoneDirection.length() <= ParameterAdapter.getPheromoneMinIntensity()) {
+            logBehavioralDecision("FOLLOW_FOOD_RANDOM", 0, false);
             pheromoneDirection = handleRandomSteering();
         } else {
+            logBehavioralDecision("FOLLOW_FOOD_PHEROMONE", pheromoneDirection.length(), true);
             pheromoneDirection.normalize();
         }
         
@@ -590,11 +581,24 @@ public class Ant extends GameObject {
 
     private void logPath() {
         long currentTime = System.nanoTime();
-        if (currentTime - lastPathLogTime > PATH_LOG_INTERVAL) {
+        if (currentTime - lastPathLogTime > LOG_INTERVAL) {
             pathHistory.add(pos.copy());
             MetricsCollector.getInstance().logEvent("ANT_POSITION", 
                 "Ant " + serialNumber, pos, getCurrentState());
             lastPathLogTime = currentTime;
+        }
+    }
+
+    private void logBehavioralDecision(String decisionType, double pheromoneIntensity, boolean usingPheromones) {
+        if (System.nanoTime() - lastDecisionLogTime > LOG_INTERVAL) {
+            MetricsCollector.getInstance().logEvent(
+                "ANT_DECISION", 
+                String.format("Ant %d - %s", serialNumber, decisionType),
+                getCenter(),
+                String.format("pheromone_intensity=%.4f,using_pheromones=%s,behavior=%s", 
+                            pheromoneIntensity, usingPheromones, behaviour.toString())
+            );
+            lastDecisionLogTime = System.nanoTime();
         }
     }
 

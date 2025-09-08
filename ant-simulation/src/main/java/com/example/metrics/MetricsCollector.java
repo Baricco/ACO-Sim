@@ -67,11 +67,15 @@ public class MetricsCollector {
         }
         
         public String toCSV() {
+
+            String dataString = (data != null) ? data.toString().replace(",", ";") : "";
+
+
             return String.format("%d,%s,%s,%s,%s,%s", 
                 timestamp, eventType, description,
                 position != null ? position.x : "",
                 position != null ? position.y : "",
-                data != null ? data.toString() : "");
+                dataString);
         }
     }
 }
