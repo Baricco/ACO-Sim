@@ -30,7 +30,7 @@ public class Ant extends GameObject {
     public static final Color ANT_FEEL_COLOR = Color.rgb(255, 255, 0, 0.2); // Colore per il raggio di percezione
     public static final Color ANT_SENSOR_COLOR = Color.rgb(255, 0, 255, 0.2); // Colore per il raggio di sensori
     public static final Color ANT_COLOR = Color.RED;
-    public static final int WINDOW_BOUND_MARGIN = -ANT_SIZE/2;              // Margine per il rimbalzo sui bordi della finestra
+    public static final int WINDOW_BOUND_MARGIN = -ANT_SIZE / 2;              // Margine per il rimbalzo sui bordi della finestra
     public static final int MAX_FOOD_SEARCH_TIME = 10000;                   // tempo massimo di ricerca del cibo in millisecondi
 
     private static final Random RANDOM = new Random();
@@ -121,9 +121,6 @@ public class Ant extends GameObject {
         
         // Muovi la formica
         move(deltaTime);
-        
-        // Controlla i bordi
-        checkBounds();
         
         // Aggiorna l'angolo per la visualizzazione
         updateAngle();
@@ -392,14 +389,22 @@ public class Ant extends GameObject {
             direction.y * deltaTime * getAntSpeed()
         );
         
-        // Calcola la posizione futura
-        Coord futurePos = pos.copy();
-        futurePos.sum(movement);
+        Coord futureCenter = this.getCenter().copy();
+        futureCenter.sum(movement);
         
         // Controlla se la posizione futura causerebbe collisioni
-        if (wouldCollideWithBounds(futurePos) || wouldCollideWithObstacles(futurePos)) {
+        if (wouldCollideWithBounds(futureCenter) || wouldCollideWithObstacles(futureCenter)) {
+
             // Invece di muoversi, cambia direzione
-            this.turnAround();
+            this.direction = getDirectionAwayFromBounds(futureCenter);
+            
+            Coord escapeMovement = new Coord(
+                        this.direction.x * deltaTime * getAntSpeed(),
+                        this.direction.y * deltaTime * getAntSpeed()
+                    );
+            
+            this.movePos(escapeMovement);
+            
             return; // Non muovere se causerebbe collisione
         }
         
@@ -407,14 +412,43 @@ public class Ant extends GameObject {
         this.movePos(movement);
     }
 
-    private boolean wouldCollideWithBounds(Coord futurePos) {
+    private Coord getDirectionAwayFromBounds(Coord futureCenter) {
         double halfSize = this.getSize() / 2.0;
         double halfFoodSize = this.getFoodLoad().getSize() / 2.0;
         
-        return (futurePos.x - halfSize - halfFoodSize < WINDOW_BOUND_MARGIN) ||
-            (futurePos.x + halfSize + halfFoodSize > mapWidth - WINDOW_BOUND_MARGIN) ||
-            (futurePos.y - halfSize - halfFoodSize < WINDOW_BOUND_MARGIN) ||
-            (futurePos.y + halfSize + halfFoodSize > mapHeight - WINDOW_BOUND_MARGIN);
+        // Controlla quale bordo sta collidendo e punta nella direzione opposta
+        if (futureCenter.y + halfSize + halfFoodSize >= mapHeight - WINDOW_BOUND_MARGIN) {
+            return new Coord(0, -1); // Bordo inferiore → vai su
+        }
+        if (futureCenter.y - halfSize - halfFoodSize <= WINDOW_BOUND_MARGIN) {
+            return new Coord(0, 1);  // Bordo superiore → vai giù  
+        }
+        if (futureCenter.x + halfSize + halfFoodSize >= mapWidth - WINDOW_BOUND_MARGIN) {
+            return new Coord(-1, 0); // Bordo destro → vai sinistra
+        }
+        if (futureCenter.x - halfSize - halfFoodSize <= WINDOW_BOUND_MARGIN) {
+            return new Coord(1, 0);  // Bordo sinistro → vai destra
+        }
+        
+        return getTurnAroundAngle(); // Fallback
+    }
+
+    private boolean wouldCollideWithBounds(Coord futureCenter) {
+        double halfSize = this.getSize() / 2.0;
+        double halfFoodSize = this.getFoodLoad().getSize() / 2.0;
+        
+        Coord currentCenter = this.getCenter();
+        
+        // Calcola margini futuri
+        double leftMargin = futureCenter.x - halfSize - halfFoodSize;
+        double rightMargin = futureCenter.x + halfSize + halfFoodSize;
+        double topMargin = futureCenter.y - halfSize - halfFoodSize;
+        double bottomMargin = futureCenter.y + halfSize + halfFoodSize;
+
+        return (leftMargin <= WINDOW_BOUND_MARGIN && futureCenter.x < currentCenter.x) ||     // Vai a sinistra verso il bordo
+            (rightMargin >= mapWidth - WINDOW_BOUND_MARGIN && futureCenter.x > currentCenter.x) || // Vai a destra verso il bordo
+            (topMargin <= WINDOW_BOUND_MARGIN && futureCenter.y < currentCenter.y) ||      // Vai su verso il bordo
+            (bottomMargin >= mapHeight - WINDOW_BOUND_MARGIN && futureCenter.y > currentCenter.y); // Vai giù verso il bordo
     }
 
     private boolean wouldCollideWithObstacles(Coord futurePos) {
@@ -429,40 +463,6 @@ public class Ant extends GameObject {
         pos = originalPos; // Ripristina posizione originale
         
         return collision;
-    }
-
-    private void checkBounds() {
-        
-        // sposta la formica in una posizione sicura
-        
-        Coord center = this.getCenter();
-        boolean stuck = false;
-        
-        // Controlla se è bloccata ai bordi
-        if (wouldCollideWithBounds(center)) {
-            // Sposta verso il centro della mappa
-            pos.x = Math.max(WINDOW_BOUND_MARGIN + getSize()/2, 
-                    Math.min(mapWidth - WINDOW_BOUND_MARGIN - getSize()/2, pos.x));
-            pos.y = Math.max(WINDOW_BOUND_MARGIN + getSize()/2, 
-                    Math.min(mapHeight - WINDOW_BOUND_MARGIN - getSize()/2, pos.y));
-            stuck = true;
-        }
-        
-        // Controlla se è bloccata negli ostacoli
-        if (obstacleManager != null && obstacleManager.isCollidingWithObstacle(this, WINDOW_BOUND_MARGIN)) {
-            // Sposta in posizione libera più vicina
-            Coord freePos = obstacleManager.findNearestFreePosition(this, WINDOW_BOUND_MARGIN);
-            if (freePos != null) {
-                pos = freePos;
-            }
-            stuck = true;
-        }
-        
-        // Se era bloccata, cambia direzione
-        if (stuck) {
-            this.turnAround();
-        }
-
     }
 
     private void updateAngle() {
