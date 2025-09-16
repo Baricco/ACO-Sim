@@ -12,7 +12,7 @@ public class DoubleBridgeSimulation extends Simulation {
     private static final double LONG_PATH_LENGTH = 600;
 
     public DoubleBridgeSimulation(double mapWidth, double mapHeight) {
-        super(1, 200, 1000, mapWidth, mapHeight);
+        super(1, 500, 1000, mapWidth, mapHeight);
         initDensityManager();
         this.ANTS_BEHAVIOUR = Ant.ANT_BEHAVIOUR.ALL_PHEROMONES;
         this.hasObstacles = false;

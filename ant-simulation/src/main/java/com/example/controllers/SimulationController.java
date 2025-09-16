@@ -171,7 +171,10 @@ public class SimulationController implements Initializable {
             System.err.println("Canvas or SimulationManager not initialized yet");
             return;
         }
-                
+            
+        MetricsCollector.getInstance().startExperiment("experiment_" + System.currentTimeMillis());
+
+
         waitForCanvasReady();
     }
 

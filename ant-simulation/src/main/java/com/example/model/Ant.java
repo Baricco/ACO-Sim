@@ -356,6 +356,13 @@ public class Ant extends GameObject {
 
             this.updateMilestoneTracking(); // Aggiorna le coordinate dell'ultima milestone
 
+            MetricsCollector.getInstance().logEvent(
+                "FOOD_DROP", 
+                "Ant " + this.getSerialNumber() + " dropped food", 
+                nestCenter,
+                null
+            );
+
             this.turnAround();
 
             this.lastPheromonePosition = null; // Reset per nuovo percorso
