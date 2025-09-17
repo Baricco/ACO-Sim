@@ -10,12 +10,8 @@ import com.example.model.Obstacle;
 
 public class TJunctionSimulation extends Simulation {
     
-    private boolean phase1Complete = false;
-    private boolean phase2Started = false;
-    private long startTime;
-    private static final long PHASE1_DURATION = 30_000; // 30 secondi
+    
     double junctionY = mapHeight * 0.5;
-
     
     
     public TJunctionSimulation(double mapWidth, double mapHeight) {
@@ -57,7 +53,6 @@ public class TJunctionSimulation extends Simulation {
         generateTJunction();
 
         MetricsCollector.getInstance().startExperiment("TJunction");
-        startTime = System.currentTimeMillis();
         
         // Nido al centro-basso
         Coord nestPos = new Coord(mapWidth * 0.5, mapHeight);
